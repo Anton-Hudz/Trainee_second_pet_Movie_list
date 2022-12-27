@@ -31,6 +31,7 @@ type DB struct {
 	Username string
 	Password string
 	DBName   string
+	SSLMode  string
 }
 
 func loadEnvVar() error {
@@ -84,6 +85,7 @@ func GetConfig() (Options, error) {
 			Username: os.Getenv("DB_USER"),
 			Password: os.Getenv("DB_PASSWORD"),
 			DBName:   os.Getenv("DB_NAME"),
+			SSLMode:  os.Getenv("DB_SSLMODE"),
 		},
 	}
 

@@ -1,6 +1,8 @@
 // package repository
 package repository
 
+import "database/sql"
+
 type UserRepository interface {
 }
 
@@ -12,6 +14,6 @@ type Repository struct {
 	FilmRepository
 }
 
-func NewRepository() *Repository {
+func NewRepository(db *sql.DB) *Repository {
 	return &Repository{}
 }
