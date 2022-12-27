@@ -46,6 +46,7 @@ func main() {
 	db, err := repository.ConnectDB(config.DB)
 	if err != nil {
 		fmt.Printf("Error connecting to database on host: %s, port: %s, with error: %s", config.DB.Host, config.DB.Port, err)
+
 		return
 	}
 
