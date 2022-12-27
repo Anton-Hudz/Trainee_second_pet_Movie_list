@@ -8,4 +8,3 @@ db:
   username: "db_user"
   dbname: "movielist"
   sslmode: "disable"
-  # password: "db_password"
