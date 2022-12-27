@@ -4,10 +4,12 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"github.com/spf13/viper"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 )
 
 const (
@@ -34,6 +36,7 @@ type DB struct {
 	SSLMode  string
 }
 
+//if you want to use just .env file to conf.
 func loadEnvVar() error {
 	f, err := os.Open(envFileName)
 	if err != nil {
@@ -86,6 +89,30 @@ func GetConfig() (Options, error) {
 			Password: os.Getenv("DB_PASSWORD"),
 			DBName:   os.Getenv("DB_NAME"),
 			SSLMode:  os.Getenv("DB_SSLMODE"),
+		},
+	}
+
+	return opt, nil
+}
+
+//for viper:
+func GetViperConfig() (Options, error) {
+	if err := godotenv.Load(); err != nil {
+		return Options{}, errors.New("error loading env file")
+	}
+
+	opt := Options{
+		Server: Server{
+			Host: viper.GetString("server.host"),
+			Port: viper.GetString("server.port"),
+		},
+		DB: DB{
+			Host:     viper.GetString("db.host"),
+			Port:     viper.GetString("db.port"),
+			Username: viper.GetString("db.username"),
+			Password: os.Getenv("DB_PASSWORD"), //this is safety data and you can't add password to public repo
+			DBName:   viper.GetString("db.dbname"),
+			SSLMode:  viper.GetString("db.sslmode"),
 		},
 	}
 

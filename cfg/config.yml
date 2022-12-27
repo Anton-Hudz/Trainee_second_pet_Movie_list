@@ -1,9 +1,11 @@
-port: "8080"
+server:
+  host: "localhost"
+  port: "8080"
 
 db:
   host: "localhost"
-  port: 5432
+  port: "5432"
   username: "db_user"
-  password: "db_password"
   dbname: "movielist"
-  sslmode: "disabled"
+  sslmode: "disable"
+  # password: "db_password"
