@@ -45,7 +45,7 @@ func main() {
 	}
 	db, err := repository.ConnectDB(config.DB)
 	if err != nil {
-		fmt.Printf("Error connecting to database on host: %s, port: %s, with error: %s", config.DB.Host, config.DB.Port, err)
+		fmt.Printf("Error connecting to database on host: %s, port: %s, with error: %s", viper.GetString("db.host"), viper.GetString("db.port"), err)
 
 		return
 	}
@@ -57,7 +57,7 @@ func main() {
 	log.Println("Connection to database successfully created")
 
 	srv := new(transport.Server)
-	if err := srv.Run(viper.GetString(config.Server.Port), handlers.InitRoutes()); err != nil {
+	if err := srv.Run(viper.GetString("server.port"), handlers.InitRoutes()); err != nil {
 		log.Fatal("Error occured while runnning server: %w", err.Error())
 	}
 }

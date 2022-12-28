@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"fmt"
+	// "fmt"
 
 	"github.com/Anton-Hudz/MovieList/app/entities"
 	"github.com/Anton-Hudz/MovieList/app/repository"
@@ -17,11 +17,13 @@ func NewAuthUser(repo repository.UserRepository) *AuthUser {
 }
 
 func (a *AuthUser) AddUser(user entities.User) (int, error) {
-	var err error
-	user.Password, err = hash.GeneratePasswordHash(user.Password)
-	if err != nil {
-		return 0, fmt.Errorf("error while adding user to database: %w", err)
-	}
+	// var err error
+	// user.Password, err = hash.GeneratePasswordHash(user.Password)
+	// if err != nil {
+	// 	return 0, fmt.Errorf("error while adding user to database: %w", err)
+	// }
+
+	user.Password = hash.GeneratePasswordHash(user.Password)
 
 	return a.Repo.AddUser(user)
 }
