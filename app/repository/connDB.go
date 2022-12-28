@@ -7,6 +7,14 @@ import (
 	"github.com/Anton-Hudz/MovieList/cfg"
 )
 
+const (
+	userTable      = "user"
+	filmTable      = "film"
+	directorTable  = "director"
+	favouriteTable = "favourites"
+	wishlistTable  = "wishlist"
+)
+
 func ConnectDB(cfg cfg.DB) (*sql.DB, error) {
 	str := fmt.Sprintf("host=%v port=%v user=%v password=%v dbname=%v sslmode=%v",
 		cfg.Host, cfg.Port, cfg.Username, cfg.Password, cfg.DBName, cfg.SSLMode)

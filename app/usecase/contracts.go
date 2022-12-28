@@ -1,8 +1,12 @@
 package usecase
 
-import "github.com/Anton-Hudz/MovieList/app/repository"
+import (
+	"github.com/Anton-Hudz/MovieList/app/entities"
+	"github.com/Anton-Hudz/MovieList/app/repository"
+)
 
 type UserUseCase interface {
+	AddUser(user entities.User) (int, error)
 }
 
 type FilmUseCase interface {
@@ -14,5 +18,7 @@ type UseCase struct {
 }
 
 func NewUseCase(repos *repository.Repository) *UseCase {
-	return &UseCase{}
+	return &UseCase{
+		UserUseCase: NewAuthUser(repos.UserRepository),
+	}
 }

@@ -2,9 +2,9 @@ package entities
 
 type User struct {
 	ID       int    `json:"id"`
-	Login    string `json:"login"`
-	Password string `json:"password"`
-	Age      string `json:"age"`
+	Login    string `json:"login" binding:"required"`
+	Password string `json:"password" binding:"required"`
+	Age      string `json:"age" binding:"required"`
 }
 
 type Film struct {
