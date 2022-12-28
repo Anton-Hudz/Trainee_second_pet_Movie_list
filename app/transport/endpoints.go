@@ -26,7 +26,6 @@ func (h *Handler) CreateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"id": id,
 	})
-
 }
 
 func (h *Handler) LogIn(c *gin.Context) {
