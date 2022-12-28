@@ -8,10 +8,10 @@ import (
 )
 
 const (
-	userTable      = "user"
+	userTable      = "users"
 	filmTable      = "film"
 	directorTable  = "director"
-	favouriteTable = "favourites"
+	favouriteTable = "favourite"
 	wishlistTable  = "wishlist"
 )
 
