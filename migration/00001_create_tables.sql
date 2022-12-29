@@ -4,7 +4,8 @@ CREATE TABLE "users" (
     "id" serial not null unique,
     "login" varchar(255) not null unique,
     "password_hash" varchar(255) not null,
-    "age" int not null
+    "age" int not null,
+    CONSTRAINT "unique_user_login" UNIQUE("login")
 );
 
 CREATE TABLE "director" (
