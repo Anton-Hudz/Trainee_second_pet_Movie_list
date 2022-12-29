@@ -2,11 +2,16 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/Anton-Hudz/MovieList/app/entities"
-	_ "github.com/lib/pq"
+	"github.com/Anton-Hudz/MovieList/app/globals"
+	"github.com/lib/pq"
+	// _ "github.com/lib/pq"
 )
+
+const ErrCodeUniqueViolation = "unique_violation"
 
 type Repo struct {
 	DB *sql.DB
@@ -20,11 +25,16 @@ func NewRepo(db *sql.DB) *Repo {
 
 func (r *Repo) AddUser(user entities.User) (int, error) {
 	var id int
-	query := fmt.Sprintf("INSERT INTO %s (login, password_hash, age) values ($1, $2, $3) RETURNING id", userTable)
-	row := r.DB.QueryRow(query, user.Login, user.Password, user.Age)
-	if err := row.Scan(&id); err != nil {
-		return 0, err
+	SQL := fmt.Sprintf("INSERT INTO %s (login, password_hash, age) values ($1, $2, $3) RETURNING id", userTable)
+	if err := r.DB.QueryRow(SQL, user.Login, user.Password, user.Age).Scan(&id); err != nil {
+		pqErr := new(pq.Error)
+		if errors.As(err, &pqErr) && pqErr.Code.Name() == ErrCodeUniqueViolation {
+			return 0, globals.ErrDuplicateLogin
+		}
+
+		return 0, fmt.Errorf("error inserting into database: %w", err)
 	}
+
 	return id, nil
 }
 
