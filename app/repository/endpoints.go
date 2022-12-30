@@ -25,7 +25,7 @@ func NewRepo(db *sql.DB) *Repo {
 
 func (r *Repo) AddUser(user entities.User) (int, error) {
 	var id int
-	SQL := fmt.Sprintf("INSERT INTO %s (login, password_hash, age) values ($1, $2, $3) RETURNING id", userTable)
+	SQL := fmt.Sprintf("INSERT INTO %s (login, password_hash, age) values ($1, $2, $3) RETURNING id", usersTable)
 	if err := r.DB.QueryRow(SQL, user.Login, user.Password, user.Age).Scan(&id); err != nil {
 		pqErr := new(pq.Error)
 		if errors.As(err, &pqErr) && pqErr.Code.Name() == ErrCodeUniqueViolation {
@@ -36,6 +36,22 @@ func (r *Repo) AddUser(user entities.User) (int, error) {
 	}
 
 	return id, nil
+}
+
+func (r *Repo) GetUser(login, password string) (entities.User, error) {
+	var user entities.User
+	SQL := fmt.Sprintf("SELECT id FROM %s WHERE login=$1 AND password_hash=$2", usersTable)
+
+	if err := r.DB.QueryRow(SQL, login, password).Scan(&user.ID); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return entities.User{}, globals.ErrNotFound
+		}
+
+		return entities.User{}, fmt.Errorf("internal error while scanning row: %w", err)
+	}
+
+	return user, nil
+
 }
 
 // INSERT INTO film (name, genre, director_id, rate, year, minutes)

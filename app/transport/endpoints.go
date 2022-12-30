@@ -28,8 +28,30 @@ func (h *Handler) CreateUser(c *gin.Context) {
 	})
 }
 
-func (h *Handler) LogIn(c *gin.Context) {
+type LogInInput struct {
+	Login    string `json:"login" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
 
+func (h *Handler) LogIn(c *gin.Context) {
+	var input LogInInput
+
+	if err := c.BindJSON(&input); err != nil {
+		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
+
+		return
+	}
+
+	token, err := h.usecases.GenerateToken(input.Login, input.Password)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalSeverErr, Details: err.Error()})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"token": token,
+	})
 }
 
 func (h *Handler) LogOut(c *gin.Context) {
