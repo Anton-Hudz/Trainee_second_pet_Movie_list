@@ -7,6 +7,7 @@ import (
 
 type UserUseCase interface {
 	AddUser(user entities.User) (int, error)
+	GenerateToken(login, password string) (string, error)
 }
 
 type FilmUseCase interface {
