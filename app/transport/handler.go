@@ -21,7 +21,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		users.POST("/sign-in", h.LogIn)
 		users.DELETE("/", h.LogOut)
 	}
-	film := router.Group("/film")
+	film := router.Group("/film", h.UserIdentity)
 	{
 		film.POST("/", h.CreateFilm)
 		film.GET("/", h.GetAllFilms)
