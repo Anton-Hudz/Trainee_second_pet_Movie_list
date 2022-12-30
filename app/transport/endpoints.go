@@ -59,6 +59,10 @@ func (h *Handler) LogOut(c *gin.Context) {
 }
 
 func (h *Handler) CreateFilm(c *gin.Context) {
+	id, _ := c.Get(userCtx)
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"id": id,
+	})
 
 }
 
