@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	tokenTTL   = 12 * time.Hour
+	tokenTTL   = 5 * time.Minute
 	signingKey = "gdajkl156alaflkj"
 )
 
@@ -50,7 +50,14 @@ func (a *AuthUser) GenerateToken(login, password string) (string, error) {
 		user.ID,
 	})
 
-	return token.SignedString([]byte(signingKey))
+	userToken, _ := token.SignedString([]byte(signingKey))
+	//передать токен в БД  и записать его
+	// вызвать что то типа AddToken(token string, user.ID int)
+	// а в репозитории формируем отбор по ид и записываем токен в ячейку (добавить в миграции ячейку
+	//с админом, токеном, ячейку удаленный токен)
+	// переименовать метод, он не только генерирует токен
+
+	return userToken, nil
 }
 
 func (a *AuthUser) ParseToken(accessToken string) (int, error) {
