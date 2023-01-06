@@ -5,6 +5,9 @@ CREATE TABLE "users" (
     "login" varchar(255) not null unique,
     "password_hash" varchar(255) not null,
     "age" int not null,
+    "admin" varchar(10) DEFAULT NULL,
+    "token" varchar(255) DEFAULT NULL,
+    "deleted_token" TIMESTAMP WITH TIME ZONE DEFAULT NULL,
     CONSTRAINT "unique_user_login" UNIQUE("login")
 );
 

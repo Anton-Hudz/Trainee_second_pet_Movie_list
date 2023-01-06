@@ -4,6 +4,7 @@ import (
 	// "fmt"
 
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/Anton-Hudz/MovieList/app/entities"
@@ -36,7 +37,7 @@ func (a *AuthUser) AddUser(user entities.User) (int, error) {
 	return a.Repo.AddUser(user)
 }
 
-func (a *AuthUser) GenerateToken(login, password string) (string, error) {
+func (a *AuthUser) GenerateAddToken(login, password string) (string, error) {
 	user, err := a.Repo.GetUser(login, hash.GeneratePasswordHash(password))
 	if err != nil {
 		return "", err
@@ -53,9 +54,13 @@ func (a *AuthUser) GenerateToken(login, password string) (string, error) {
 	userToken, _ := token.SignedString([]byte(signingKey))
 	//передать токен в БД  и записать его
 	// вызвать что то типа AddToken(token string, user.ID int)
-	// а в репозитории формируем отбор по ид и записываем токен в ячейку (добавить в миграции ячейку
-	//с админом, токеном, ячейку удаленный токен)
+	// а в репозитории формируем отбор по ид и записываем токен в ячейку с  токеном
 	// переименовать метод, он не только генерирует токен
+
+	err = a.Repo.AddToken(userToken, user)
+	if err != nil {
+		return "", fmt.Errorf("error occured while added token to database: %w", err)
+	}
 
 	return userToken, nil
 }
