@@ -25,8 +25,9 @@ func NewRepo(db *sql.DB) *Repo {
 
 func (r *Repo) AddUser(user entities.User) (int, error) {
 	var id int
-	SQL := fmt.Sprintf("INSERT INTO %s (login, password_hash, age) values ($1, $2, $3) RETURNING id", usersTable)
-	if err := r.DB.QueryRow(SQL, user.Login, user.Password, user.Age).Scan(&id); err != nil {
+	SQL := fmt.Sprintf("INSERT INTO %s (login, password_hash, age, admin) values ($1, $2, $3, $4) RETURNING id", usersTable)
+
+	if err := r.DB.QueryRow(SQL, user.Login, user.Password, user.Age, user.Admin).Scan(&id); err != nil {
 		pqErr := new(pq.Error)
 		if errors.As(err, &pqErr) && pqErr.Code.Name() == ErrCodeUniqueViolation {
 			return 0, globals.ErrDuplicateLogin
@@ -52,6 +53,20 @@ func (r *Repo) GetUser(login, password string) (entities.User, error) {
 
 	return user, nil
 
+}
+
+func (r *Repo) AddToken(userToken string, user entities.User) error {
+	SQL := fmt.Sprintf(`UPDATE %s SET token = $1 WHERE id = $2`, usersTable)
+
+	if _, err := r.DB.Exec(SQL, userToken, user.ID); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return globals.ErrNotFound
+		}
+
+		return fmt.Errorf("internal error while scanning row: %w", err)
+	}
+
+	return nil
 }
 
 // INSERT INTO film (name, genre, director_id, rate, year, minutes)

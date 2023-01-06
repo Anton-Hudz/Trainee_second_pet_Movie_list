@@ -42,7 +42,7 @@ func (h *Handler) LogIn(c *gin.Context) {
 		return
 	}
 
-	token, err := h.usecases.GenerateToken(input.Login, input.Password)
+	token, err := h.usecases.GenerateAddToken(input.Login, input.Password)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalSeverErr, Details: err.Error()})
 

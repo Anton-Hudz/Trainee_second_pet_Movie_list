@@ -10,6 +10,7 @@ import (
 type UserRepository interface {
 	AddUser(user entities.User) (int, error)
 	GetUser(login, password string) (entities.User, error)
+	AddToken(userToken string, user entities.User) error
 }
 
 type FilmRepository interface {

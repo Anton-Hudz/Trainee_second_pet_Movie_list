@@ -5,6 +5,7 @@ type User struct {
 	Login    string `json:"login" binding:"required"`
 	Password string `json:"password" binding:"required"`
 	Age      string `json:"age" binding:"required"`
+	Admin    string `json:"admin"`
 }
 
 type Film struct {
