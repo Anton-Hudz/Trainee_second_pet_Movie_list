@@ -66,8 +66,27 @@ func (r *Repo) AddToken(userToken string, user entities.User) error {
 	return nil
 }
 
+type CheckToken struct {
+	Token string `json:"token"`
+}
+
+func (r *Repo) CheckToken(accessToken string) error {
+	var user CheckToken
+	SQL := fmt.Sprintf(`SELECT token FROM %s WHERE token=$1 AND deleted_token is null`, usersTable)
+
+	if err := r.DB.QueryRow(SQL, accessToken).Scan(&user.Token); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return globals.ErrTokenIsAlreadyDeleted
+		}
+
+		return fmt.Errorf("internal error while scanning row: %w", err)
+	}
+
+	return nil
+}
+
 func (r *Repo) DeleteToken(userId int, token string) error {
-	SQL := fmt.Sprintf(`UPDATE %s SET deleted_token = NOW() WHERE id = $1 AND token = $2, deleted_token is null`, usersTable)
+	SQL := fmt.Sprintf(`UPDATE %s SET deleted_token = NOW() WHERE id = $1 AND token = $2`, usersTable)
 
 	if _, err := r.DB.Exec(SQL, userId, token); err != nil {
 		errors.Is(err, sql.ErrNoRows)
