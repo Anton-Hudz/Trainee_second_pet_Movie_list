@@ -25,7 +25,7 @@ func NewRepo(db *sql.DB) *Repo {
 
 func (r *Repo) AddUser(user entities.User) (int, error) {
 	var id int
-	SQL := fmt.Sprintf("INSERT INTO %s (login, password_hash, age, admin) values ($1, $2, $3, $4) RETURNING id", usersTable)
+	SQL := fmt.Sprintf(`INSERT INTO %s (login, password_hash, age, admin) values ($1, $2, $3, $4) RETURNING id`, usersTable)
 
 	if err := r.DB.QueryRow(SQL, user.Login, user.Password, user.Age, user.Admin).Scan(&id); err != nil {
 		pqErr := new(pq.Error)
@@ -41,7 +41,7 @@ func (r *Repo) AddUser(user entities.User) (int, error) {
 
 func (r *Repo) GetUser(login, password string) (entities.User, error) {
 	var user entities.User
-	SQL := fmt.Sprintf("SELECT id FROM %s WHERE login=$1 AND password_hash=$2", usersTable)
+	SQL := fmt.Sprintf(`SELECT id FROM %s WHERE login=$1 AND password_hash=$2`, usersTable)
 
 	if err := r.DB.QueryRow(SQL, login, password).Scan(&user.ID); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -56,14 +56,22 @@ func (r *Repo) GetUser(login, password string) (entities.User, error) {
 }
 
 func (r *Repo) AddToken(userToken string, user entities.User) error {
-	SQL := fmt.Sprintf(`UPDATE %s SET token = $1 WHERE id = $2`, usersTable)
+	SQL := fmt.Sprintf(`UPDATE %s SET token = $1, deleted_token = null WHERE id = $2`, usersTable)
 
 	if _, err := r.DB.Exec(SQL, userToken, user.ID); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return globals.ErrNotFound
-		}
+		errors.Is(err, sql.ErrNoRows)
+		return globals.ErrNotFound
+	}
 
-		return fmt.Errorf("internal error while scanning row: %w", err)
+	return nil
+}
+
+func (r *Repo) DeleteToken(userId int, token string) error {
+	SQL := fmt.Sprintf(`UPDATE %s SET deleted_token = NOW() WHERE id = $1 AND token = $2, deleted_token is null`, usersTable)
+
+	if _, err := r.DB.Exec(SQL, userId, token); err != nil {
+		errors.Is(err, sql.ErrNoRows)
+		return globals.ErrTokenIsAlreadyDeleted
 	}
 
 	return nil

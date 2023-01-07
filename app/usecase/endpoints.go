@@ -52,10 +52,6 @@ func (a *AuthUser) GenerateAddToken(login, password string) (string, error) {
 	})
 
 	userToken, _ := token.SignedString([]byte(signingKey))
-	//передать токен в БД  и записать его
-	// вызвать что то типа AddToken(token string, user.ID int)
-	// а в репозитории формируем отбор по ид и записываем токен в ячейку с  токеном
-	// переименовать метод, он не только генерирует токен
 
 	err = a.Repo.AddToken(userToken, user)
 	if err != nil {
@@ -82,10 +78,19 @@ func (a *AuthUser) ParseToken(accessToken string) (int, error) {
 		return 0, errors.New("token claims are not of type *tokenClaims")
 	}
 
-	//возможно, нужно проверить, рабочий ли токен не выполнен ли по нему лог-аут
+	//возможно(ОБЯЗАТЕЛЬНО), нужно проверить, рабочий ли токен не выполнен ли по нему лог-аут
 	// передав через ЮзКейс роспарсенный ИД в репозиторий и проверив его статус в БД
 	// к примеру ячейка удаленный токен не пустая означает что токен не валидный
 	//и есть еще вариант, сверять токен в каждой функции при попытке записать фильм или ТД
 
 	return claims.UserID, nil
+}
+
+func (a *AuthUser) SignOut(userId int, token string) error {
+	err := a.Repo.DeleteToken(userId, token)
+	if err != nil {
+		return fmt.Errorf("error while deleting token from database: %w", err)
+	}
+
+	return nil
 }

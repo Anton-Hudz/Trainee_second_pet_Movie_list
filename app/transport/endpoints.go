@@ -2,6 +2,7 @@ package transport
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/Anton-Hudz/MovieList/app/entities"
 	"github.com/gin-gonic/gin"
@@ -55,13 +56,34 @@ func (h *Handler) LogIn(c *gin.Context) {
 }
 
 func (h *Handler) LogOut(c *gin.Context) {
-	//передается токен
-	//парсим его как в создании фильма (его читаем мидлваре)
-	//id, _ := c.Get(userCtx)
-	//потом этот ИД передаем в ЮзКейс
-	// через ЮзКейс передаем ид в репозиторий
-	// в репозитории помечаем как удаленный токен у пользователя с переданным идишником
+	header := c.GetHeader(authorizationHeader)
+	if header == "" {
+		newResponse(c, http.StatusUnauthorized, Response{Message: MsgEmptyAuthHeader})
 
+		return
+	}
+
+	headerParts := strings.Split(header, " ")
+	if len(headerParts) != 2 {
+		newResponse(c, http.StatusUnauthorized, Response{Message: MsgInvalidAuthHeader})
+
+		return
+	}
+
+	userId, err := h.usecases.UserUseCase.ParseToken(headerParts[1])
+	if err != nil {
+		newResponse(c, http.StatusUnauthorized, Response{Message: MsgProblemWithParseToken, Details: err.Error()})
+
+		return
+	}
+
+	if err := h.usecases.SignOut(userId, headerParts[1]); err != nil {
+		newResponse(c, http.StatusNotFound, Response{Message: MsgNotFound, Details: err.Error()})
+
+		return
+	}
+	c.JSON(http.StatusNoContent, nil)
+	//log.Printf("logout is completed for user %s", userId)
 }
 
 func (h *Handler) CreateFilm(c *gin.Context) {
