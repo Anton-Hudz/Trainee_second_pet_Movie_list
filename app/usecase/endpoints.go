@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	tokenTTL   = 5 * time.Minute
+	tokenTTL   = 30 * time.Minute
 	signingKey = "gdajkl156alaflkj"
 )
 
@@ -78,10 +78,9 @@ func (a *AuthUser) ParseToken(accessToken string) (int, error) {
 		return 0, errors.New("token claims are not of type *tokenClaims")
 	}
 
-	//возможно(ОБЯЗАТЕЛЬНО), нужно проверить, рабочий ли токен не выполнен ли по нему лог-аут
-	// передав через ЮзКейс роспарсенный ИД в репозиторий и проверив его статус в БД
-	// к примеру ячейка удаленный токен не пустая означает что токен не валидный
-	//и есть еще вариант, сверять токен в каждой функции при попытке записать фильм или ТД
+	if err := a.Repo.CheckToken(accessToken); err != nil {
+		return 0, fmt.Errorf("error while checking token from database: %w", err)
+	}
 
 	return claims.UserID, nil
 }
