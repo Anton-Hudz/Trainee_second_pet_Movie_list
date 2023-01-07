@@ -9,6 +9,7 @@ type UserUseCase interface {
 	AddUser(user entities.User) (int, error)
 	GenerateAddToken(login, password string) (string, error)
 	ParseToken(token string) (int, error)
+	SignOut(userId int, token string) error
 }
 
 type FilmUseCase interface {
