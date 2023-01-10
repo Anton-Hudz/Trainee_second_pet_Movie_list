@@ -10,6 +10,7 @@ import (
 const (
 	authorizationHeader = "Authorization"
 	userCtx             = "userId"
+	userPermission      = "userRole"
 )
 
 func (h *Handler) UserIdentity(c *gin.Context) {
@@ -27,7 +28,7 @@ func (h *Handler) UserIdentity(c *gin.Context) {
 		return
 	}
 
-	userId, err := h.usecases.UserUseCase.ParseToken(headerParts[1])
+	userId, userRole, err := h.usecases.UserUseCase.ParseToken(headerParts[1])
 	if err != nil {
 		newResponse(c, http.StatusUnauthorized, Response{Message: MsgProblemWithParseToken, Details: err.Error()})
 
@@ -35,4 +36,5 @@ func (h *Handler) UserIdentity(c *gin.Context) {
 	}
 
 	c.Set(userCtx, userId)
+	c.Set(userPermission, userRole)
 }
