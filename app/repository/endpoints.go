@@ -25,9 +25,9 @@ func NewRepo(db *sql.DB) *Repo {
 
 func (r *Repo) AddUser(user entities.User) (int, error) {
 	var id int
-	SQL := fmt.Sprintf(`INSERT INTO %s (login, password_hash, age, admin) values ($1, $2, $3, $4) RETURNING id`, usersTable)
+	SQL := fmt.Sprintf(`INSERT INTO %s (login, password_hash, age, user_role) values ($1, $2, $3, $4) RETURNING id`, usersTable)
 
-	if err := r.DB.QueryRow(SQL, user.Login, user.Password, user.Age, user.Admin).Scan(&id); err != nil {
+	if err := r.DB.QueryRow(SQL, user.Login, user.Password, user.Age, user.User_Role).Scan(&id); err != nil {
 		pqErr := new(pq.Error)
 		if errors.As(err, &pqErr) && pqErr.Code.Name() == ErrCodeUniqueViolation {
 			return 0, globals.ErrDuplicateLogin
