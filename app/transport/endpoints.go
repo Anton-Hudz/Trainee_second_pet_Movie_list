@@ -9,15 +9,15 @@ import (
 )
 
 func (h *Handler) CreateUser(c *gin.Context) {
-	var input entities.User
+	var inputUserData entities.User
 
-	if err := c.BindJSON(&input); err != nil {
+	if err := c.BindJSON(&inputUserData); err != nil {
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
 
 		return
 	}
 
-	id, err := h.usecases.AddUser(input)
+	id, err := h.usecases.AddUser(inputUserData)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalSeverErr, Details: err.Error()})
 
@@ -87,18 +87,37 @@ func (h *Handler) LogOut(c *gin.Context) {
 }
 
 func (h *Handler) CreateFilm(c *gin.Context) {
-	id, _ := c.Get(userCtx)
-	role, _ := c.Get(userPermission)
+	var inputFilmData entities.Film
 
+	role, _ := c.Get(userPermission)
 	if role != "admin" {
 		newResponse(c, http.StatusForbidden, Response{Message: MsgHaveNotPermission})
 
 		return
 	}
 
+	if err := c.BindJSON(&inputFilmData); err != nil {
+		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
+
+		return
+	}
+
+	if err := h.usecases.ValidateFilmData(inputFilmData); err != nil {
+		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
+
+		return
+	}
+
+	id, err := h.usecases.AddFilm(inputFilmData)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalSeverErr, Details: err.Error()})
+
+		return
+	}
+
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"id":   id,
-		"role": role,
+		//temporary area for testing permission
+		"id": id,
 	})
 
 }

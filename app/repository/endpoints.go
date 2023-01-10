@@ -96,5 +96,9 @@ func (r *Repo) DeleteToken(userId int, token string) error {
 	return nil
 }
 
-// INSERT INTO film (name, genre, director_id, rate, year, minutes)
-// 			VALUES ('Avatar', 'Fantastic', 2, 9, 2009, 155)
+// func (r *Repo) AddFilm(film entities.Film) (int, error) {
+// 	return 0, nil
+
+// 	// INSERT INTO film (name, genre, director_id, rate, year, minutes)
+// 	// 			VALUES ('Avatar', 'Fantastic', 2, 9, 2009, 155)
+// }

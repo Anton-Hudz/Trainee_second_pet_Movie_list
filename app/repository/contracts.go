@@ -16,6 +16,7 @@ type UserRepository interface {
 }
 
 type FilmRepository interface {
+	// AddFilm(film entities.Film) (int, error)
 }
 
 type Repository struct {
@@ -26,5 +27,6 @@ type Repository struct {
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{
 		UserRepository: NewRepo(db),
+		FilmRepository: NewRepo(db),
 	}
 }

@@ -95,3 +95,19 @@ func (a *AuthUser) SignOut(userId int, token string) error {
 
 	return nil
 }
+
+type FilmService struct {
+	Repo repository.FilmRepository
+}
+
+func NewFilmService(repo repository.FilmRepository) *FilmService {
+	return &FilmService{Repo: repo}
+}
+
+func (f *FilmService) ValidateFilmData(film entities.Film) error {
+	return nil
+}
+func (f *FilmService) AddFilm(film entities.Film) (int, error) {
+	return 0, nil
+
+}
