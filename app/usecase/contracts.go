@@ -13,6 +13,8 @@ type UserUseCase interface {
 }
 
 type FilmUseCase interface {
+	ValidateFilmData(film entities.Film) error
+	AddFilm(film entities.Film) (int, error)
 }
 
 type UseCase struct {
@@ -23,5 +25,6 @@ type UseCase struct {
 func NewUseCase(repos *repository.Repository) *UseCase {
 	return &UseCase{
 		UserUseCase: NewAuthUser(repos.UserRepository),
+		FilmUseCase: NewFilmService(repos.FilmRepository),
 	}
 }
