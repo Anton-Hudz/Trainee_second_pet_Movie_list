@@ -70,7 +70,7 @@ func (h *Handler) LogOut(c *gin.Context) {
 		return
 	}
 
-	userId, err := h.usecases.UserUseCase.ParseToken(headerParts[1])
+	userId, _, err := h.usecases.UserUseCase.ParseToken(headerParts[1])
 	if err != nil {
 		newResponse(c, http.StatusUnauthorized, Response{Message: MsgProblemWithParseToken, Details: err.Error()})
 
@@ -88,8 +88,10 @@ func (h *Handler) LogOut(c *gin.Context) {
 
 func (h *Handler) CreateFilm(c *gin.Context) {
 	id, _ := c.Get(userCtx)
+	role, _ := c.Get(userPermission)
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"id": id,
+		"id":   id,
+		"role": role,
 	})
 
 }

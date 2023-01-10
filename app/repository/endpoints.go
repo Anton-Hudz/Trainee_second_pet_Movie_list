@@ -41,9 +41,9 @@ func (r *Repo) AddUser(user entities.User) (int, error) {
 
 func (r *Repo) GetUser(login, password string) (entities.User, error) {
 	var user entities.User
-	SQL := fmt.Sprintf(`SELECT id FROM %s WHERE login=$1 AND password_hash=$2`, usersTable)
+	SQL := fmt.Sprintf(`SELECT id, user_role FROM %s WHERE login=$1 AND password_hash=$2`, usersTable)
 
-	if err := r.DB.QueryRow(SQL, login, password).Scan(&user.ID); err != nil {
+	if err := r.DB.QueryRow(SQL, login, password).Scan(&user.ID, &user.User_Role); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return entities.User{}, globals.ErrNotFound
 		}
