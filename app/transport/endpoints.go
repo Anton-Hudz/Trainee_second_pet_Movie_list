@@ -89,6 +89,13 @@ func (h *Handler) LogOut(c *gin.Context) {
 func (h *Handler) CreateFilm(c *gin.Context) {
 	id, _ := c.Get(userCtx)
 	role, _ := c.Get(userPermission)
+
+	if role != "admin" {
+		newResponse(c, http.StatusForbidden, Response{Message: MsgHaveNotPermission})
+
+		return
+	}
+
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"id":   id,
 		"role": role,
