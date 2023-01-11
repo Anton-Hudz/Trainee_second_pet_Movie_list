@@ -10,12 +10,12 @@ type User struct {
 
 type Film struct {
 	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	Genre       string `json:"genre"`
-	Director_ID string `json:"director_id"`
-	Rate        int    `json:"rate"`
-	Year        int    `json:"year"`
-	Minutes     int    `json:"minutes"`
+	Name        string `json:"name" binding:"required"`
+	Genre       string `json:"genre" binding:"required"`
+	Director_ID string `json:"director_id" binding:"required"`
+	Rate        int    `json:"rate" binding:"required"`
+	Year        int    `json:"year" binding:"required"`
+	Minutes     int    `json:"minutes" binding:"required"`
 }
 
 type Director struct {

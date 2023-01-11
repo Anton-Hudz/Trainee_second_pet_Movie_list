@@ -107,8 +107,14 @@ func (h *Handler) CreateFilm(c *gin.Context) {
 
 		return
 	}
+	directorId, err := h.usecases.GetDirectorId(inputFilmData)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
 
-	id, err := h.usecases.AddFilm(inputFilmData)
+		return
+	}
+
+	id, err := h.usecases.AddFilm(inputFilmData, directorId)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalSeverErr, Details: err.Error()})
 
