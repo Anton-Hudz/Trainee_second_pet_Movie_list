@@ -14,7 +14,8 @@ type UserUseCase interface {
 
 type FilmUseCase interface {
 	ValidateFilmData(film entities.Film) error
-	AddFilm(film entities.Film) (int, error)
+	GetDirectorId(film entities.Film) (int, error)
+	AddFilm(film entities.Film, directorId int) (int, error)
 }
 
 type UseCase struct {

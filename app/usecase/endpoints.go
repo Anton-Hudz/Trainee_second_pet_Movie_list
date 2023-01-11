@@ -105,9 +105,27 @@ func NewFilmService(repo repository.FilmRepository) *FilmService {
 }
 
 func (f *FilmService) ValidateFilmData(film entities.Film) error {
+
+	if film.Minutes <= 0 {
+		return errors.New("error while checking film length, length must be above 0 minutes")
+	}
+
+	if err := f.Repo.CheckUniqueFilm(film); err != nil {
+		return fmt.Errorf("error while checking uniqueness of film in database", err)
+	}
+
 	return nil
 }
-func (f *FilmService) AddFilm(film entities.Film) (int, error) {
+func (f *FilmService) GetDirectorId(film entities.Film) (int, error) {
+
 	return 0, nil
+	// fmt.Errorf("error while checking uniqueness of film in database", err)
+}
+func (f *FilmService) AddFilm(film entities.Film, directorId int) (int, error) {
+	id, err := f.Repo.AddMovie(film, directorId)
+	if err != nil {
+		return 0, fmt.Errorf("error while added movie to database: %w", err)
+	}
+	return id, nil
 
 }
