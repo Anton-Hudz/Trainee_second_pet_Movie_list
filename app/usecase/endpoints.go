@@ -1,21 +1,19 @@
 package usecase
 
 import (
-	// "fmt"
-
 	"errors"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/Anton-Hudz/MovieList/app/entities"
-	"github.com/Anton-Hudz/MovieList/app/globals"
 	"github.com/Anton-Hudz/MovieList/app/repository"
 	"github.com/Anton-Hudz/MovieList/pkg/hash"
 	"github.com/dgrijalva/jwt-go"
 )
 
 const (
-	tokenTTL   = 30 * time.Minute
+	tokenTTL   = 120 * time.Minute
 	signingKey = "gdajkl156alaflkj"
 )
 
@@ -107,8 +105,52 @@ func NewFilmService(repo repository.FilmRepository) *FilmService {
 
 func (f *FilmService) ValidateFilmData(film entities.Film) error {
 
-	if film.Minutes <= 0 {
-		return errors.New("error occured while checking film length, length must be above 0 minutes")
+	minutesInt, err := strconv.Atoi(film.Minutes)
+	if err != nil {
+		return errors.New("error duration must be number")
+	}
+
+	if err := checkRequiredFields(film); err != nil {
+		return err
+	}
+
+	if err := checkMovieDuration(minutesInt); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func checkRequiredFields(film entities.Film) error {
+	const minLength = 1
+	if len(film.Name) < minLength {
+		return fmt.Errorf("movie name field must not be empty")
+	}
+
+	if len(film.Genre) < minLength {
+		return fmt.Errorf("genre field must not be empty")
+	}
+
+	if len(film.Rate) < minLength {
+		return fmt.Errorf("rate field must not be empty")
+	}
+
+	if len(film.Year) < minLength {
+		return fmt.Errorf("year field must not be empty")
+	}
+
+	if len(film.Minutes) < minLength {
+		return fmt.Errorf("minutes field must not be empty")
+	}
+
+	return nil
+}
+
+func checkMovieDuration(filmDuration int) error {
+	const minFilmDuration int = 0
+
+	if filmDuration <= minFilmDuration {
+		return fmt.Errorf("error occured while checking film length, length must be above %v minutes", minFilmDuration)
 	}
 
 	return nil
