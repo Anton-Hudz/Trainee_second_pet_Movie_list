@@ -66,15 +66,11 @@ func (r *Repo) AddToken(userToken string, user entities.User) error {
 	return nil
 }
 
-type CheckToken struct {
-	Token string `json:"token"`
-}
-
 func (r *Repo) CheckToken(accessToken string) error {
-	var user CheckToken
+	var token string
 	SQL := fmt.Sprintf(`SELECT token FROM %s WHERE token=$1 AND deleted_token is null`, usersTable)
 
-	if err := r.DB.QueryRow(SQL, accessToken).Scan(&user.Token); err != nil {
+	if err := r.DB.QueryRow(SQL, accessToken).Scan(&token); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return globals.ErrTokenIsAlreadyDeleted
 		}
