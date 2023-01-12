@@ -15,7 +15,8 @@ CREATE TABLE "users" (
 CREATE TABLE "director" (
     "id" serial not null unique,
     "name" varchar(255) not null,
-    "date_of_birth" varchar(255) not null
+    "date_of_birth" varchar(255) not null,
+    CONSTRAINT "unique_director_name" UNIQUE("name")
 );
 
 CREATE TABLE "film" (
@@ -25,7 +26,8 @@ CREATE TABLE "film" (
     "director_id" int references "director" (id) not null,
     "rate" int not null,
     "year" int not null,
-    "minutes" int not null
+    "minutes" int not null,
+    CONSTRAINT "unique_film_name" UNIQUE("name")
 );
 
 CREATE TABLE "favourite" (

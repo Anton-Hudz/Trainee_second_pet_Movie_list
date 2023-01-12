@@ -97,10 +97,12 @@ func (r *Repo) DeleteToken(userId int, token string) error {
 }
 
 func (r *Repo) CheckUniqueFilm(film entities.Film) error {
+
 	return nil
 }
 
 func (r *Repo) AddMovie(film entities.Film, directorId int) (int, error) {
+
 	return 0, nil
 
 	// INSERT INTO film (name, genre, director_id, rate, year, minutes)

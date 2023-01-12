@@ -116,11 +116,13 @@ func (f *FilmService) ValidateFilmData(film entities.Film) error {
 
 	return nil
 }
+
 func (f *FilmService) GetDirectorId(film entities.Film) (int, error) {
 
 	return 0, nil
 	// fmt.Errorf("error while checking uniqueness of film in database", err)
 }
+
 func (f *FilmService) AddFilm(film entities.Film, directorId int) (int, error) {
 	id, err := f.Repo.AddMovie(film, directorId)
 	if err != nil {
