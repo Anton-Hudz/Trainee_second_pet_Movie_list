@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/Anton-Hudz/MovieList/app/entities"
+	"github.com/Anton-Hudz/MovieList/app/globals"
 	"github.com/Anton-Hudz/MovieList/app/repository"
 	"github.com/Anton-Hudz/MovieList/pkg/hash"
 	"github.com/dgrijalva/jwt-go"
@@ -81,7 +82,7 @@ func (a *AuthUser) ParseToken(accessToken string) (int, string, error) {
 	}
 
 	if err := a.Repo.CheckToken(accessToken); err != nil {
-		return 0, "", fmt.Errorf("error while checking token from database: %w", err)
+		return 0, "", fmt.Errorf("error occured while checking token from database: %w", err)
 	}
 
 	return claims.UserID, claims.UserRole, nil
@@ -90,7 +91,7 @@ func (a *AuthUser) ParseToken(accessToken string) (int, string, error) {
 func (a *AuthUser) SignOut(userId int, token string) error {
 	err := a.Repo.DeleteToken(userId, token)
 	if err != nil {
-		return fmt.Errorf("error while deleting token from database: %w", err)
+		return fmt.Errorf("error occured while deleting token from database: %w", err)
 	}
 
 	return nil
@@ -107,12 +108,8 @@ func NewFilmService(repo repository.FilmRepository) *FilmService {
 func (f *FilmService) ValidateFilmData(film entities.Film) error {
 
 	if film.Minutes <= 0 {
-		return errors.New("error while checking film length, length must be above 0 minutes")
+		return errors.New("error occured while checking film length, length must be above 0 minutes")
 	}
-
-	// if err := f.Repo.CheckUniqueFilm(film); err != nil {
-	// 	return fmt.Errorf("error while checking uniqueness of film in database", err)
-	// }
 
 	return nil
 }
@@ -122,14 +119,15 @@ func (f *FilmService) GetDirectorId(film entities.Film) (int, error) {
 	if err != nil {
 		return 0, fmt.Errorf("error occured while getting director ID: %w", err)
 	}
+
 	return id, nil
 }
 
 func (f *FilmService) AddFilm(film entities.Film, directorId int) (int, error) {
 	id, err := f.Repo.AddMovie(film, directorId)
 	if err != nil {
-		return 0, fmt.Errorf("error while added movie to database: %w", err)
+		return 0, fmt.Errorf("error occured while added movie to database: %w", err)
 	}
-	return id, nil
 
+	return id, nil
 }

@@ -95,20 +95,11 @@ func (r *Repo) DeleteToken(userId int, token string) error {
 	return nil
 }
 
-// func (r *Repo) CheckUniqueFilm(film entities.Film) error {
-
-// 	return nil
-// }
-
-type Director struct {
-	Director_ID int `json:"director_id"`
-}
-
 func (r *Repo) GetDirectorId(film entities.Film) (int, error) {
-	var director Director
+	var id int
 	SQL := fmt.Sprintf(`SELECT id FROM %s WHERE name=$1`, directorTable)
 
-	if err := r.DB.QueryRow(SQL, film.Director_Name).Scan(&director.Director_ID); err != nil {
+	if err := r.DB.QueryRow(SQL, film.Director_Name).Scan(&id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return 0, globals.ErrNotFound
 		}
@@ -116,13 +107,22 @@ func (r *Repo) GetDirectorId(film entities.Film) (int, error) {
 		return 0, fmt.Errorf("internal error while scanning row: %w", err)
 	}
 
-	return director.Director_ID, nil
+	return id, nil
 }
 
 func (r *Repo) AddMovie(film entities.Film, directorId int) (int, error) {
+	var id int
 
-	return 0, nil
+	SQL := fmt.Sprintf(`INSERT INTO %s (name, genre, director_id, rate, year, minutes) values ($1, $2, $3, $4, $5, $6) RETURNING id`, filmTable)
 
-	// INSERT INTO film (name, genre, director_id, rate, year, minutes)
-	// 			VALUES ('Avatar', 'Fantastic', 2, 9, 2009, 155)
+	if err := r.DB.QueryRow(SQL, film.Name, film.Genre, directorId, film.Rate, film.Year, film.Minutes).Scan(&id); err != nil {
+		pqErr := new(pq.Error)
+		if errors.As(err, &pqErr) && pqErr.Code.Name() == ErrCodeUniqueViolation {
+			return 0, globals.ErrDuplicateFilmName
+		}
+
+		return 0, fmt.Errorf("error inserting into database: %w", err)
+	}
+
+	return id, nil
 }
