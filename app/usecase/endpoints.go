@@ -110,17 +110,19 @@ func (f *FilmService) ValidateFilmData(film entities.Film) error {
 		return errors.New("error while checking film length, length must be above 0 minutes")
 	}
 
-	if err := f.Repo.CheckUniqueFilm(film); err != nil {
-		return fmt.Errorf("error while checking uniqueness of film in database", err)
-	}
+	// if err := f.Repo.CheckUniqueFilm(film); err != nil {
+	// 	return fmt.Errorf("error while checking uniqueness of film in database", err)
+	// }
 
 	return nil
 }
 
 func (f *FilmService) GetDirectorId(film entities.Film) (int, error) {
-
-	return 0, nil
-	// fmt.Errorf("error while checking uniqueness of film in database", err)
+	id, err := f.Repo.GetDirectorId(film)
+	if err != nil {
+		return 0, fmt.Errorf("error occured while getting director ID: %w", err)
+	}
+	return id, nil
 }
 
 func (f *FilmService) AddFilm(film entities.Film, directorId int) (int, error) {

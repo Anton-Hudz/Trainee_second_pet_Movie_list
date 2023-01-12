@@ -16,7 +16,8 @@ type UserRepository interface {
 }
 
 type FilmRepository interface {
-	CheckUniqueFilm(film entities.Film) error
+	// CheckUniqueFilm(film entities.Film) error
+	GetDirectorId(film entities.Film) (int, error)
 	AddMovie(film entities.Film, directorId int) (int, error)
 }
 
