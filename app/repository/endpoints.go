@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"math"
 	"strconv"
 
 	"github.com/Anton-Hudz/MovieList/app/entities"
@@ -109,15 +110,18 @@ func (r *Repo) GetDirectorId(film entities.Film) (int, error) {
 
 func (r *Repo) AddMovie(film entities.Film, directorId int) (int, error) {
 	var id int
-
-	rateInt, err := strconv.ParseFloat(film.Rate, 32)
+	const tenths float64 = 100
+	rate, err := strconv.ParseFloat(film.Rate, 32)
 	if err != nil {
 		return 0, errors.New("error rate must be number")
 	}
+	rateRounded := math.Round(rate*tenths) / tenths
+
 	yearInt, err := strconv.Atoi(film.Year)
 	if err != nil {
 		return 0, errors.New("error year must be number")
 	}
+
 	minutesInt, err := strconv.Atoi(film.Minutes)
 	if err != nil {
 		return 0, errors.New("error duration must be number")
@@ -125,7 +129,7 @@ func (r *Repo) AddMovie(film entities.Film, directorId int) (int, error) {
 
 	SQL := fmt.Sprintf(`INSERT INTO %s (name, genre, director_id, rate, year, minutes) values ($1, $2, $3, $4, $5, $6) RETURNING id`, filmTable)
 
-	if err := r.DB.QueryRow(SQL, film.Name, film.Genre, directorId, rateInt, yearInt, minutesInt).Scan(&id); err != nil {
+	if err := r.DB.QueryRow(SQL, film.Name, film.Genre, directorId, rateRounded, yearInt, minutesInt).Scan(&id); err != nil {
 		pqErr := new(pq.Error)
 		if errors.As(err, &pqErr) && pqErr.Code.Name() == ErrCodeUniqueViolation {
 			return 0, globals.ErrDuplicateFilmName
