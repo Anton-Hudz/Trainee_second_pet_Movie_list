@@ -52,7 +52,6 @@ func (r *Repo) GetUser(login, password string) (entities.User, error) {
 	}
 
 	return user, nil
-
 }
 
 func (r *Repo) AddToken(userToken string, user entities.User) error {
@@ -96,9 +95,28 @@ func (r *Repo) DeleteToken(userId int, token string) error {
 	return nil
 }
 
-func (r *Repo) CheckUniqueFilm(film entities.Film) error {
+// func (r *Repo) CheckUniqueFilm(film entities.Film) error {
 
-	return nil
+// 	return nil
+// }
+
+type Director struct {
+	Director_ID int `json:"director_id"`
+}
+
+func (r *Repo) GetDirectorId(film entities.Film) (int, error) {
+	var director Director
+	SQL := fmt.Sprintf(`SELECT id FROM %s WHERE name=$1`, directorTable)
+
+	if err := r.DB.QueryRow(SQL, film.Director_Name).Scan(&director.Director_ID); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return 0, globals.ErrNotFound
+		}
+
+		return 0, fmt.Errorf("internal error while scanning row: %w", err)
+	}
+
+	return director.Director_ID, nil
 }
 
 func (r *Repo) AddMovie(film entities.Film, directorId int) (int, error) {

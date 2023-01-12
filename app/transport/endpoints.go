@@ -107,6 +107,7 @@ func (h *Handler) CreateFilm(c *gin.Context) {
 
 		return
 	}
+
 	directorId, err := h.usecases.GetDirectorId(inputFilmData)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
@@ -123,9 +124,8 @@ func (h *Handler) CreateFilm(c *gin.Context) {
 
 	c.JSON(http.StatusOK, map[string]interface{}{
 		//temporary area for testing permission
-		"id": id,
+		"film_id": id,
 	})
-
 }
 
 func (h *Handler) GetAllFilms(c *gin.Context) {
