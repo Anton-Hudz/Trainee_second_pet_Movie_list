@@ -117,13 +117,12 @@ func (h *Handler) CreateFilm(c *gin.Context) {
 
 	id, err := h.usecases.AddFilm(inputFilmData, directorId)
 	if err != nil {
-		newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalSeverErr, Details: err.Error()})
+		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
 
 		return
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		//temporary area for testing permission
 		"film_id": id,
 	})
 }
