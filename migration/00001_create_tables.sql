@@ -24,7 +24,7 @@ CREATE TABLE "film" (
     "name" varchar(255) not null,
     "genre" varchar(255) not null,
     "director_id" int references "director" (id) not null,
-    "rate" int not null,
+    "rate" decimal not null,
     "year" int not null,
     "minutes" int not null,
     CONSTRAINT "unique_film_name" UNIQUE("name")
