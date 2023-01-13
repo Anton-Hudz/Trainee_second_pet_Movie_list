@@ -5,5 +5,7 @@ VALUES ('James Cameron', '1954');
 
 -- +migrate Down
 -- SQL section 'Down' is executed when this migration is rolled back
+DELETE from wishlist;
+DELETE from favourite;
 DELETE from film;
 DELETE from director;
