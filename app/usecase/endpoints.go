@@ -173,3 +173,11 @@ func (f *FilmService) AddFilm(film entities.Film, directorId int) (int, error) {
 
 	return id, nil
 }
+
+func (f *FilmService) GetFilmID(filmName string) (int, error) {
+	return 0, nil
+}
+
+func (f *FilmService) AddFilmToFavourite(userID any, filmID int) (int, error) {
+	return 0, nil
+}

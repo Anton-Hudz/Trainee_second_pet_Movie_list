@@ -35,6 +35,6 @@ func (h *Handler) UserIdentity(c *gin.Context) {
 		return
 	}
 
-	c.Set(userCtx, userId) //perhaps not necesary in this data
+	c.Set(userCtx, userId)
 	c.Set(userPermission, userRole)
 }

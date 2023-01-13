@@ -24,7 +24,7 @@ func (h *Handler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
+	c.JSON(http.StatusCreated, map[string]interface{}{
 		"id": id,
 	})
 }
@@ -117,12 +117,12 @@ func (h *Handler) CreateFilm(c *gin.Context) {
 
 	id, err := h.usecases.AddFilm(inputFilmData, directorId)
 	if err != nil {
-		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
+		newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalSeverErr, Details: err.Error()})
 
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
+	c.JSON(http.StatusCreated, map[string]interface{}{
 		"film_id": id,
 	})
 }
@@ -135,7 +135,37 @@ func (h *Handler) GetFilmByID(c *gin.Context) {
 
 }
 
+type FilmList struct {
+	Film string `json:"id"`
+}
+
 func (h *Handler) AddToFavourite(c *gin.Context) {
+	userID, _ := c.Get(userCtx)
+
+	var filmName FilmList
+	if err := c.BindJSON(&filmName); err != nil {
+		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
+
+		return
+	}
+
+	filmID, err := h.usecases.GetFilmID(filmName.Film)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
+
+		return
+	}
+
+	id, err := h.usecases.AddFilmToFavourite(userID, filmID)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalSeverErr, Details: err.Error()})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"id film in my favourite list list": id,
+	})
 
 }
 
