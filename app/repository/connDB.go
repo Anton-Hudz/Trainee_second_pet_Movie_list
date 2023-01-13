@@ -11,8 +11,8 @@ const (
 	usersTable     = "users"
 	filmTable      = "film"
 	directorTable  = "director"
-	favouriteTable = "favourite"
-	wishlistTable  = "wishlist"
+	FavouriteTable = "favourite"
+	WishlistTable  = "wishlist"
 )
 
 func ConnectDB(cfg cfg.DB) (*sql.DB, error) {
