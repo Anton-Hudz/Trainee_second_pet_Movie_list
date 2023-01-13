@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	tokenTTL   = 120 * time.Minute
+	tokenTTL   = 12 * time.Hour
 	signingKey = "gdajkl156alaflkj"
 )
 
@@ -104,7 +104,6 @@ func NewFilmService(repo repository.FilmRepository) *FilmService {
 }
 
 func (f *FilmService) ValidateFilmData(film entities.Film) error {
-
 	minutesInt, err := strconv.Atoi(film.Minutes)
 	if err != nil {
 		return errors.New("error duration must be number")
@@ -175,9 +174,19 @@ func (f *FilmService) AddFilm(film entities.Film, directorId int) (int, error) {
 }
 
 func (f *FilmService) GetFilmID(filmName string) (int, error) {
-	return 0, nil
+	id, err := f.Repo.GetFilmID(filmName)
+	if err != nil {
+		return 0, fmt.Errorf("error occured while getting film ID: %w", err)
+	}
+
+	return id, nil
 }
 
 func (f *FilmService) AddFilmToFavourite(userID any, filmID int) (int, error) {
-	return 0, nil
+	id, err := f.Repo.AddMovieToList(userID, filmID, repository.FavouriteTable)
+	if err != nil {
+		return 0, fmt.Errorf("error occured while added movie to favourite list: %w", err)
+	}
+
+	return id, nil
 }

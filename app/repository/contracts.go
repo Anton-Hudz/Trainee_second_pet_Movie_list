@@ -16,9 +16,10 @@ type UserRepository interface {
 }
 
 type FilmRepository interface {
-	// CheckUniqueFilm(film entities.Film) error
 	GetDirectorId(film entities.Film) (int, error)
 	AddMovie(film entities.Film, directorId int) (int, error)
+	GetFilmID(filmName string) (int, error)
+	AddMovieToList(userID any, filmID int, table string) (int, error)
 }
 
 type Repository struct {
