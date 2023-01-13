@@ -190,3 +190,12 @@ func (f *FilmService) AddFilmToFavourite(userID any, filmID int) (int, error) {
 
 	return id, nil
 }
+
+func (f *FilmService) AddToWishlist(userID any, filmID int) (int, error) {
+	id, err := f.Repo.AddMovieToList(userID, filmID, repository.WishlistTable)
+	if err != nil {
+		return 0, fmt.Errorf("error occured while added movie to wish list: %w", err)
+	}
+
+	return id, nil
+}
