@@ -2,6 +2,7 @@ package transport
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/Anton-Hudz/MovieList/app/entities"
@@ -132,7 +133,19 @@ func (h *Handler) GetAllFilms(c *gin.Context) {
 }
 
 func (h *Handler) GetFilmByID(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, Response{Message: MsgInvalidIDParam})
+		return
+	}
 
+	film, err := h.usecases.GetFilmById(id)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalSeverErr, Details: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, film)
 }
 
 type FilmList struct {

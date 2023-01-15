@@ -156,6 +156,21 @@ func (r *Repo) GetFilmID(filmName string) (int, error) {
 	return id, nil
 }
 
+func (r *Repo) GetFilmById(id int) (entities.FilmFromDB, error) {
+	var film entities.FilmFromDB
+	SQL := fmt.Sprintf(`SELECT id, name, genre, director_id, rate, year, minutes FROM %s WHERE id=$1;`, filmTable)
+
+	if err := r.DB.QueryRow(SQL, id).Scan(&film.ID, &film.Name, &film.Genre, &film.Director_id, &film.Rate, &film.Year, &film.Minutes); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return entities.FilmFromDB{}, globals.ErrNotFound
+		}
+
+		return entities.FilmFromDB{}, fmt.Errorf("internal error while scanning row: %w", err)
+	}
+
+	return film, nil
+}
+
 func (r *Repo) AddMovieToList(userID any, filmID int, table string) (int, error) {
 	var id int
 	SQL := fmt.Sprintf(`INSERT INTO %s (user_id, film_id) values ($1, $2) RETURNING id`, table)

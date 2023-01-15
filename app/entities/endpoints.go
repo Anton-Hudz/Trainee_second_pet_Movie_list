@@ -18,6 +18,16 @@ type Film struct {
 	Minutes       string `json:"minutes"`
 }
 
+type FilmFromDB struct {
+	ID          int     `json:"id"`
+	Name        string  `json:"name"`
+	Genre       string  `json:"genre"`
+	Director_id int     `json:"director_id"`
+	Rate        float32 `json:"rate"`
+	Year        int     `json:"year"`
+	Minutes     int     `json:"minutes"`
+}
+
 type Director struct {
 	ID            int    `json:"id"`
 	Name          string `json:"name"`
