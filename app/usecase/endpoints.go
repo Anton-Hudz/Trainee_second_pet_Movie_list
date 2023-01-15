@@ -191,6 +191,15 @@ func (f *FilmService) GetFilmById(id int) (entities.FilmFromDB, error) {
 	return film, nil
 }
 
+func (f *FilmService) GetDirectorName(id int) (string, error) {
+	name, err := f.Repo.GetDirectorName(id)
+	if err != nil {
+		return "", fmt.Errorf("error occured while getting director name from database: %w", err)
+	}
+
+	return name, nil
+}
+
 func (f *FilmService) AddFilmToFavourite(userID any, filmID int) (int, error) {
 	id, err := f.Repo.AddMovieToList(userID, filmID, repository.FavouriteTable)
 	if err != nil {
