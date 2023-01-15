@@ -171,6 +171,21 @@ func (r *Repo) GetFilmById(id int) (entities.FilmFromDB, error) {
 	return film, nil
 }
 
+func (r *Repo) GetDirectorName(id int) (string, error) {
+	var name string
+	SQL := fmt.Sprintf(`SELECT name FROM %s WHERE id=$1`, directorTable)
+
+	if err := r.DB.QueryRow(SQL, id).Scan(&name); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", globals.ErrNotFound
+		}
+
+		return "", fmt.Errorf("internal error while scanning row: %w", err)
+	}
+
+	return name, nil
+}
+
 func (r *Repo) AddMovieToList(userID any, filmID int, table string) (int, error) {
 	var id int
 	SQL := fmt.Sprintf(`INSERT INTO %s (user_id, film_id) values ($1, $2) RETURNING id`, table)

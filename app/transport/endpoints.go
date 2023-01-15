@@ -128,6 +128,16 @@ func (h *Handler) CreateFilm(c *gin.Context) {
 	})
 }
 
+type FilmResponse struct {
+	ID            int     `json:"id"`
+	Name          string  `json:"name"`
+	Genre         string  `json:"genre"`
+	Director_Name string  `json:"director_name"`
+	Rate          float32 `json:"rate"`
+	Year          int     `json:"year"`
+	Minutes       int     `json:"minutes"`
+}
+
 func (h *Handler) GetAllFilms(c *gin.Context) {
 
 }
@@ -141,11 +151,27 @@ func (h *Handler) GetFilmByID(c *gin.Context) {
 
 	film, err := h.usecases.GetFilmById(id)
 	if err != nil {
+		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
+		return
+	}
+
+	director_name, err := h.usecases.GetDirectorName(film.Director_id)
+	if err != nil {
 		newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalSeverErr, Details: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, film)
+	userResp := FilmResponse{
+		ID:            film.ID,
+		Name:          film.Name,
+		Genre:         film.Genre,
+		Director_Name: director_name,
+		Rate:          film.Rate,
+		Year:          film.Year,
+		Minutes:       film.Minutes,
+	}
+
+	c.JSON(http.StatusOK, userResp)
 }
 
 type FilmList struct {
