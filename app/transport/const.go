@@ -8,6 +8,7 @@ const (
 	MsgInvalidAuthHeader     = "Invalid authorization header"
 	MsgProblemWithParseToken = "Problem while parsing token"
 	MsgHaveNotPermission     = "You don’t have permission to access"
+	MsgInvalidIDParam        = "Invalid id parameter"
 	readTimeoutSeconds       = 10
 	writeTimeoutSeconds      = 10
 )

@@ -182,6 +182,15 @@ func (f *FilmService) GetFilmID(filmName string) (int, error) {
 	return id, nil
 }
 
+func (f *FilmService) GetFilmById(id int) (entities.FilmFromDB, error) {
+	film, err := f.Repo.GetFilmById(id)
+	if err != nil {
+		return entities.FilmFromDB{}, fmt.Errorf("error occured while getting film from database: %w", err)
+	}
+
+	return film, nil
+}
+
 func (f *FilmService) AddFilmToFavourite(userID any, filmID int) (int, error) {
 	id, err := f.Repo.AddMovieToList(userID, filmID, repository.FavouriteTable)
 	if err != nil {

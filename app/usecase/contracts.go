@@ -19,6 +19,7 @@ type FilmUseCase interface {
 	GetFilmID(filmName string) (int, error)
 	AddFilmToFavourite(userID any, filmID int) (int, error)
 	AddToWishlist(userID any, filmID int) (int, error)
+	GetFilmById(id int) (entities.FilmFromDB, error)
 }
 
 type UseCase struct {
