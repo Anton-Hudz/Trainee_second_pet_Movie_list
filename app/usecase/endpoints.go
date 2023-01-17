@@ -182,6 +182,64 @@ func (f *FilmService) GetFilmID(filmName string) (int, error) {
 	return id, nil
 }
 
+func (f *FilmService) MakeQuery(params entities.QueryParams) (string, error) {
+
+	// var (
+	// 	replaceCoupleConditions string
+	// 	query                   string = `SELECT * FROM %s`
+	// 	SQL                     string
+	// )
+	// if filter != "" {
+	// 		splitfilter := strings.Split(filter, ":")
+
+	// 		if len(splitfilter) == 2 {
+	// 			replace := strings.ReplaceAll(filter, ",", " ")
+	// 			replaceCoupleConditions = strings.ReplaceAll(replace, ":", " AND ")
+	// 			SQL = query + " WHERE " + replaceCoupleConditions
+	// 		}
+	// 		if len(splitfilter) < 2 {
+	// 			replace := strings.ReplaceAll(filter, ",", " ")
+	// 			// SQL = query + " WHERE " + replace
+	// 			SQL = fmt.Sprintf("%s WHERE %s", query, replace)
+	// 		}
+
+	// 		log.Println("SQL:", SQL)
+	// 	}
+	// 	if filter == "" {
+	// 		log.Println("no filter")
+	// 	}
+	return "", nil
+}
+
+func (f *FilmService) GetFilmList(query string) ([]*entities.FilmFromDB, error) {
+	return []*entities.FilmFromDB{}, nil
+	//полный ответ уже нужно передать в транспорт
+}
+
+// получение ЦСВ будет таким же в реппозитории
+
+// type UsersResponse struct {
+// 	Results []User `json:"results"`
+// }
+
+// func makeUsersRESTful(userArr []entities.User) []User {
+// 	users := make([]User, 0, len(userArr))
+
+// 	for _, u := range userArr {
+// 		user := User{
+// 			ID:        u.ID,
+// 			Email:     u.Email,
+// 			FirstName: u.FirstName,
+// 			LastName:  u.LastName,
+// 			CreatedAt: u.CreatedAt,
+// 		}
+
+// 		users = append(users, user)
+// 	}
+
+// 	return users
+// }
+
 func (f *FilmService) GetFilmById(id int) (entities.FilmFromDB, error) {
 	film, err := f.Repo.GetFilmById(id)
 	if err != nil {
@@ -189,6 +247,7 @@ func (f *FilmService) GetFilmById(id int) (entities.FilmFromDB, error) {
 	}
 
 	return film, nil
+	//ответ формировать тут
 }
 
 func (f *FilmService) GetDirectorName(id int) (string, error) {
