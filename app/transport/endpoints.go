@@ -138,8 +138,43 @@ type FilmResponse struct {
 	Minutes       int     `json:"minutes"`
 }
 
+//example: /film/?filter=genre,=,'fantasy':rate,>,8.4&sort=rate,year,minutes&limit=3&offset=2
+//example: SELECT * FROM film WHERE genre = 'fantasy' AND rate > 8.4 ORDER BY rate, year, minutes LIMIT 3 OFFSET 2;
 func (h *Handler) GetAllFilms(c *gin.Context) {
 
+	var params entities.QueryParams
+
+	params.Filter = c.Query("filter")
+	params.Sort = c.Query("sort")
+	params.Limit = c.Query("limit")
+	params.Offset = c.Query("offset")
+
+	query, err := h.usecases.MakeQuery(params)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
+
+		return
+	}
+
+	filmList, err := h.usecases.GetFilmList(query)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, filmList)
+
+	// 	SELECT * from users
+	// select * from film
+	// select * from director
+	// SELECT name FROM director WHERE id=1
+	// select * from film limit 8 OFFSET 5
+	// select * from film where id > 6 limit 8
+	// select * from film where year >= 2000 AND year < 2008 order by rate,name limit null OFFSET null
+	// select * from film where year >= 2000 AND rate > 8.4 order by rate, name limit null OFFSET null
+	// select * from film where genre = 'fantasy' AND rate > 8.4 order by rate, year, minutes desc limit null OFFSET null
+	// genre,=,fantasy:rate,>,8.4:rate,>,8.4
 }
 
 func (h *Handler) GetFilmByID(c *gin.Context) {
@@ -203,7 +238,7 @@ func (h *Handler) AddToFavourite(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"id film in my favourite list list": id,
+		"film's id in my favourite list": id,
 	})
 }
 
@@ -232,7 +267,7 @@ func (h *Handler) AddToWishlist(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"id film in my wish list list": id,
+		"film's id in my wish list": id,
 	})
 }
 
