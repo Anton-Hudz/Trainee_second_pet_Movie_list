@@ -1,7 +1,6 @@
 package transport
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -141,6 +140,10 @@ type FilmResponse struct {
 
 //example: /film/?filter=genre,=,'fantasy':rate,>,8.4&sort=rate,year,minutes&limit=3&offset=2
 //example: SELECT * FROM film WHERE genre = 'fantasy' AND rate > 8.4 ORDER BY rate, year, minutes LIMIT 3 OFFSET 2;
+type getAllFilmsResponse struct {
+	Data []entities.FilmFromDB `json:"data"`
+}
+
 func (h *Handler) GetAllFilms(c *gin.Context) {
 
 	var params entities.QueryParams
@@ -156,17 +159,16 @@ func (h *Handler) GetAllFilms(c *gin.Context) {
 
 		return
 	}
-	fmt.Println("SQL in transport:", SQL)
 
-	// filmList, err := h.usecases.GetFilmList(SQL)
-	// if err != nil {
-	// 	newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
+	filmList, err := h.usecases.GetFilmList(SQL)
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
 
-	// 	return
-	// }
+		return
+	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"SQL is": SQL,
+	c.JSON(http.StatusOK, getAllFilmsResponse{
+		Data: filmList,
 	})
 
 	// 	SELECT * from users

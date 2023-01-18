@@ -171,6 +171,33 @@ func (r *Repo) GetFilmById(id int) (entities.FilmFromDB, error) {
 	return film, nil
 }
 
+func (r *Repo) GetAllFilms(SQL string) ([]entities.FilmFromDB, error) {
+	var films []entities.FilmFromDB
+
+	rows, err := r.DB.Query(SQL)
+	if err != nil {
+		return nil, fmt.Errorf("error with query parameters: %w", err)
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var film entities.FilmFromDB
+
+		if err := rows.Scan(&film.ID, &film.Name, &film.Genre, &film.Director_id, &film.Rate, &film.Year, &film.Minutes); err != nil {
+			return nil, fmt.Errorf("error occurred while scaning object from query: %w", err)
+		}
+
+		films = append(films, film)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("error occurred during iteration: %w", err)
+	}
+
+	return films, nil
+}
+
 func (r *Repo) GetDirectorName(id int) (string, error) {
 	var name string
 	SQL := fmt.Sprintf(`SELECT name FROM %s WHERE id=$1`, directorTable)
