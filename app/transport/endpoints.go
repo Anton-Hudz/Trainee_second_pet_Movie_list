@@ -140,6 +140,10 @@ type FilmResponse struct {
 
 //example: /film/?filter=genre,=,'fantasy':rate,>,8.4&sort=rate,year,minutes&limit=3&offset=2
 //example: SELECT * FROM film WHERE genre = 'fantasy' AND rate > 8.4 ORDER BY rate, year, minutes LIMIT 3 OFFSET 2;
+type getAllFilmsResponse struct {
+	Data []entities.FilmFromDB `json:"data"`
+}
+
 func (h *Handler) GetAllFilms(c *gin.Context) {
 
 	var params entities.QueryParams
@@ -149,21 +153,23 @@ func (h *Handler) GetAllFilms(c *gin.Context) {
 	params.Limit = c.Query("limit")
 	params.Offset = c.Query("offset")
 
-	query, err := h.usecases.MakeQuery(params)
+	SQL, err := h.usecases.MakeQuery(params)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
 
 		return
 	}
 
-	filmList, err := h.usecases.GetFilmList(query)
+	filmList, err := h.usecases.GetFilmList(SQL)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
 
 		return
 	}
 
-	c.JSON(http.StatusOK, filmList)
+	c.JSON(http.StatusOK, getAllFilmsResponse{
+		Data: filmList,
+	})
 
 	// 	SELECT * from users
 	// select * from film
