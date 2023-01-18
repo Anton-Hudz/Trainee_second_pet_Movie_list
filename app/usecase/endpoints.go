@@ -3,7 +3,9 @@ package usecase
 import (
 	"errors"
 	"fmt"
+	"log"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/Anton-Hudz/MovieList/app/entities"
@@ -184,34 +186,64 @@ func (f *FilmService) GetFilmID(filmName string) (int, error) {
 
 func (f *FilmService) MakeQuery(params entities.QueryParams) (string, error) {
 
-	// var (
-	// 	replaceCoupleConditions string
-	// 	query                   string = `SELECT * FROM %s`
-	// 	SQL                     string
-	// )
-	// if filter != "" {
-	// 		splitfilter := strings.Split(filter, ":")
+	var (
+		query        string = `SELECT * FROM %s `
+		SQL          string
+		defaultLimit int = 5
+	)
+	if params.Filter != "" {
+		splitfilter := strings.Split(params.Filter, ":")
+		if len(splitfilter) == 2 {
+			condition := strings.ReplaceAll(params.Filter, ",", " ")
+			secondConditions := strings.ReplaceAll(condition, ":", " AND ")
+			SQL = fmt.Sprintf("%sWHERE %s ", query, secondConditions)
+		}
+		if len(splitfilter) == 1 {
+			condition := strings.ReplaceAll(params.Filter, ",", " ")
+			SQL = fmt.Sprintf("%sWHERE %s ", query, condition)
+		}
+	}
+	if params.Filter == "" {
+		SQL = query
+	}
 
-	// 		if len(splitfilter) == 2 {
-	// 			replace := strings.ReplaceAll(filter, ",", " ")
-	// 			replaceCoupleConditions = strings.ReplaceAll(replace, ":", " AND ")
-	// 			SQL = query + " WHERE " + replaceCoupleConditions
-	// 		}
-	// 		if len(splitfilter) < 2 {
-	// 			replace := strings.ReplaceAll(filter, ",", " ")
-	// 			// SQL = query + " WHERE " + replace
-	// 			SQL = fmt.Sprintf("%s WHERE %s", query, replace)
-	// 		}
+	if params.Sort != "" {
+		condition := strings.ReplaceAll(params.Sort, ",", ", ")
+		log.Println("condition:", condition)
+		sortString := fmt.Sprintf("ORDER BY %s ", condition)
+		SQL = SQL + sortString
+	}
 
-	// 		log.Println("SQL:", SQL)
-	// 	}
-	// 	if filter == "" {
-	// 		log.Println("no filter")
-	// 	}
-	return "", nil
+	if params.Limit != "" {
+		limit, err := strconv.Atoi(params.Limit)
+		if err != nil {
+			return "", errors.New("error limit must be number")
+		}
+		if limit == 0 {
+			limit = defaultLimit
+		}
+		limitString := fmt.Sprintf("LIMIT %s ", strconv.Itoa(limit))
+		SQL = SQL + limitString
+
+	}
+	if params.Limit == "" {
+		limitString := fmt.Sprintf("LIMIT %s ", strconv.Itoa(defaultLimit))
+		SQL = SQL + limitString
+	}
+
+	if params.Offset != "" {
+		offset, err := strconv.Atoi(params.Offset)
+		if err != nil {
+			return "", errors.New("error offset must be number")
+		}
+		offsetString := fmt.Sprintf("OFFSET %s;", strconv.Itoa(offset))
+		SQL = SQL + offsetString
+	}
+
+	return SQL, nil
 }
 
-func (f *FilmService) GetFilmList(query string) ([]*entities.FilmFromDB, error) {
+func (f *FilmService) GetFilmList(SQL string) ([]*entities.FilmFromDB, error) {
 	return []*entities.FilmFromDB{}, nil
 	//полный ответ уже нужно передать в транспорт
 }

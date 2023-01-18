@@ -1,6 +1,7 @@
 package transport
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -149,21 +150,24 @@ func (h *Handler) GetAllFilms(c *gin.Context) {
 	params.Limit = c.Query("limit")
 	params.Offset = c.Query("offset")
 
-	query, err := h.usecases.MakeQuery(params)
+	SQL, err := h.usecases.MakeQuery(params)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
 
 		return
 	}
+	fmt.Println("SQL in transport:", SQL)
 
-	filmList, err := h.usecases.GetFilmList(query)
-	if err != nil {
-		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
+	// filmList, err := h.usecases.GetFilmList(SQL)
+	// if err != nil {
+	// 	newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
 
-		return
-	}
+	// 	return
+	// }
 
-	c.JSON(http.StatusOK, filmList)
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"SQL is": SQL,
+	})
 
 	// 	SELECT * from users
 	// select * from film
