@@ -187,7 +187,7 @@ func (f *FilmService) GetFilmID(filmName string) (int, error) {
 func (f *FilmService) MakeQuery(params entities.QueryParams) (string, error) {
 
 	var (
-		query        string = `SELECT * FROM film `
+		query        string = `SELECT f.id, f.name, f.genre, d.name, f.rate, f.year, f.minutes FROM film f JOIN director d ON f.director_id = d.id `
 		SQL          string
 		defaultLimit int = 5
 	)
@@ -244,7 +244,7 @@ func (f *FilmService) MakeQuery(params entities.QueryParams) (string, error) {
 	return SQL, nil
 }
 
-func (f *FilmService) GetFilmList(SQL string) ([]entities.FilmFromDB, error) {
+func (f *FilmService) GetFilmList(SQL string) ([]entities.FilmResponse, error) {
 
 	//полный ответ уже нужно передать в транспорт
 
@@ -252,30 +252,10 @@ func (f *FilmService) GetFilmList(SQL string) ([]entities.FilmFromDB, error) {
 
 	filmlist, err := f.Repo.GetAllFilms(SQL)
 	if err != nil {
-		return []entities.FilmFromDB{}, fmt.Errorf("error with query parameters: %w", err)
+		return []entities.FilmResponse{}, fmt.Errorf("error with query parameters: %w", err)
 	}
 
 	return filmlist, nil
-	// type UsersResponse struct {
-	// 	Results []User `json:"results"`
-	// }
-
-	// func makeUsersRESTful(userArr []entities.User) []User {
-	// 	users := make([]User, 0, len(userArr))
-
-	// 	for _, u := range userArr {
-	// 		user := User{
-	// 			ID:        u.ID,
-	// 			Email:     u.Email,
-	// 			FirstName: u.FirstName,
-	// 			LastName:  u.LastName,
-	// 			CreatedAt: u.CreatedAt,
-	// 		}
-
-	// 		users = append(users, user)
-	// 	}
-
-	// 	return users
 }
 
 func (f *FilmService) GetFilmById(id int) (entities.FilmResponse, error) {

@@ -21,7 +21,7 @@ type FilmRepository interface {
 	GetFilmID(filmName string) (int, error)
 	AddMovieToList(userID any, filmID int, table string) (int, error)
 	GetFilmById(id int) (entities.FilmResponse, error)
-	GetAllFilms(SQL string) ([]entities.FilmFromDB, error)
+	GetAllFilms(SQL string) ([]entities.FilmResponse, error)
 }
 
 type Repository struct {
