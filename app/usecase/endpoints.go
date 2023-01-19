@@ -3,7 +3,6 @@ package usecase
 import (
 	"errors"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -192,25 +191,43 @@ func (f *FilmService) MakeQuery(params entities.QueryParams) (string, error) {
 		defaultLimit int = 5
 	)
 
-	if params.Filter != "" {
-		splitfilter := strings.Split(params.Filter, ":")
-		if len(splitfilter) == 2 {
-			condition := strings.ReplaceAll(params.Filter, ",", " ")
-			secondConditions := strings.ReplaceAll(condition, ":", " AND ")
-			SQL = fmt.Sprintf("%sWHERE %s ", query, secondConditions)
+	if params.Genre != "" {
+		splitgenre := strings.Split(params.Genre, ",")
+		for i := range splitgenre {
+			splitgenre[i] = fmt.Sprintf("'%s'", splitgenre[i])
 		}
-		if len(splitfilter) == 1 {
-			condition := strings.ReplaceAll(params.Filter, ",", " ")
-			SQL = fmt.Sprintf("%sWHERE %s ", query, condition)
-		}
+		newstr := strings.Join(splitgenre, ",")
+		SQL = fmt.Sprintf("%sWHERE genre IN (%s) ", query, newstr)
 	}
-	if params.Filter == "" {
+
+	if params.Genre != "" && params.Rate != "" {
+		SQL = fmt.Sprintf("%sAND ", SQL)
+	}
+
+	if params.Genre == "" && params.Rate != "" {
+		SQL = fmt.Sprintf("%sWHERE ", query)
+	}
+
+	if params.Rate != "" {
+		splitrange := strings.Split(params.Rate, "-")
+		if len(splitrange) != 2 {
+			return "", errors.New("error rate must consist of min & max numbers")
+		}
+		for i := range splitrange {
+			_, err := strconv.ParseFloat(splitrange[i], 32)
+			if err != nil {
+				return "", errors.New("error rate parameters must be a numbers")
+			}
+		}
+		SQL = fmt.Sprintf("%s(rate >= %s AND rate <= %s) ", SQL, splitrange[0], splitrange[1])
+	}
+
+	if params.Genre == "" && params.Rate == "" {
 		SQL = query
 	}
 
 	if params.Sort != "" {
 		condition := strings.ReplaceAll(params.Sort, ",", ", ")
-		log.Println("condition:", condition)
 		sortString := fmt.Sprintf("ORDER BY %s ", condition)
 		SQL = SQL + sortString
 	}
@@ -245,8 +262,6 @@ func (f *FilmService) MakeQuery(params entities.QueryParams) (string, error) {
 }
 
 func (f *FilmService) GetFilmList(SQL string) ([]entities.FilmResponse, error) {
-
-	//полный ответ уже нужно передать в транспорт
 
 	// получение ЦСВ будет таким же в реппозитории
 
