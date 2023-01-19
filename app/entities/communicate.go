@@ -1,7 +1,7 @@
 package entities
 
 type QueryParams struct {
-	Filter string
+	Format string
 	Genre  string
 	Rate   string
 	Sort   string
