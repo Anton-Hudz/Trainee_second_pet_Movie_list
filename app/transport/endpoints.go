@@ -128,12 +128,11 @@ func (h *Handler) CreateFilm(c *gin.Context) {
 	})
 }
 
-//example: /film/?filter=genre,=,'fantasy':rate,>,8.4&sort=rate,year,minutes&limit=3&offset=2
-//example: /film/?genre=fantasy,action,drama&rate=6-8.6&sort=minutes,rate,year&limit=9&offset=1
-//example: /film/price=490-600;producer=nike;sort=cheap/
-//example: SELECT * FROM film WHERE genre = 'fantasy' AND rate > 8.4 ORDER BY rate, year, minutes LIMIT 3 OFFSET 2;
-//Select f.id, f.name, d.name From film f Join director d ON f.director_id = d.id
-//Select * From film f Join director d ON f.director_id = d.id
+//example: film/?genre=fantasy,action,drama&rate=7-8.6&sort=minutes,rate,year&limit=5&offset=0
+//
+//example: SELECT f.id, f.name, f.genre, d.name, f.rate, f.year, f.minutes FROM film f JOIN director d
+//ON f.director_id = d.id WHERE genre IN ('fantasy','action','drama') AND (rate >= 7 AND rate <= 8.6)
+//ORDER BY minutes, rate, year LIMIT 5 OFFSET 0;
 
 func (h *Handler) GetAllFilms(c *gin.Context) {
 
