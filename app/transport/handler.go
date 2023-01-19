@@ -28,7 +28,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		film.GET("/:id", h.GetFilmByID)
 		film.POST("/favourite", h.AddToFavourite)
 		film.POST("/wishlist", h.AddToWishlist)
-		film.GET("/get-csv-file", h.GetCSVFile)
 	}
 
 	return router

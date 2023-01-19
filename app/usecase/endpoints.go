@@ -193,8 +193,6 @@ func (f *FilmService) MakeQuery(params entities.QueryParams) (string, error) {
 
 func (f *FilmService) GetFilmList(SQL string) ([]entities.FilmResponse, error) {
 
-	// получение ЦСВ будет таким же в реппозитории
-
 	filmlist, err := f.Repo.GetAllFilms(SQL)
 	if err != nil {
 		return []entities.FilmResponse{}, fmt.Errorf("error with query parameters: %w", err)

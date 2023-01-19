@@ -7,6 +7,7 @@ import (
 
 	"github.com/Anton-Hudz/MovieList/app/entities"
 	"github.com/gin-gonic/gin"
+	"github.com/gocarina/gocsv"
 )
 
 func (h *Handler) CreateUser(c *gin.Context) {
@@ -135,10 +136,10 @@ func (h *Handler) CreateFilm(c *gin.Context) {
 //ORDER BY minutes, rate, year LIMIT 5 OFFSET 0;
 
 func (h *Handler) GetAllFilms(c *gin.Context) {
-
+	var CSV []byte
 	var params entities.QueryParams
 
-	params.Rate = c.Query("rate")
+	params.Format = c.Query("format")
 	params.Genre = c.Query("genre")
 	params.Sort = c.Query("sort")
 	params.Limit = c.Query("limit")
@@ -158,9 +159,22 @@ func (h *Handler) GetAllFilms(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, entities.GetAllFilmsResponse{
-		Data: filmList,
-	})
+	switch params.Format {
+	case "json":
+		c.JSON(http.StatusOK, entities.GetAllFilmsResponse{
+			Data: filmList,
+		})
+	case "csv":
+		CSV, err = gocsv.MarshalBytes(filmList)
+		if err != nil {
+			newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalSeverErr, Details: err.Error()})
+			return
+		}
+		c.Data(http.StatusOK, "csv", CSV)
+	default:
+		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
+		return
+	}
 }
 
 func (h *Handler) GetFilmByID(c *gin.Context) {
@@ -239,8 +253,4 @@ func (h *Handler) AddToWishlist(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"film's id in my wish list": id,
 	})
-}
-
-func (h *Handler) GetCSVFile(c *gin.Context) {
-
 }
