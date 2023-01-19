@@ -191,6 +191,7 @@ func (f *FilmService) MakeQuery(params entities.QueryParams) (string, error) {
 		SQL          string
 		defaultLimit int = 5
 	)
+
 	if params.Filter != "" {
 		splitfilter := strings.Split(params.Filter, ":")
 		if len(splitfilter) == 2 {
@@ -277,23 +278,13 @@ func (f *FilmService) GetFilmList(SQL string) ([]entities.FilmFromDB, error) {
 	// 	return users
 }
 
-func (f *FilmService) GetFilmById(id int) (entities.FilmFromDB, error) {
+func (f *FilmService) GetFilmById(id int) (entities.FilmResponse, error) {
 	film, err := f.Repo.GetFilmById(id)
 	if err != nil {
-		return entities.FilmFromDB{}, fmt.Errorf("error occured while getting film from database: %w", err)
+		return entities.FilmResponse{}, fmt.Errorf("error occured while getting film from database: %w", err)
 	}
 
 	return film, nil
-	//ответ формировать тут
-}
-
-func (f *FilmService) GetDirectorName(id int) (string, error) {
-	name, err := f.Repo.GetDirectorName(id)
-	if err != nil {
-		return "", fmt.Errorf("error occured while getting director name from database: %w", err)
-	}
-
-	return name, nil
 }
 
 func (f *FilmService) AddFilmToFavourite(userID any, filmID int) (int, error) {

@@ -128,27 +128,19 @@ func (h *Handler) CreateFilm(c *gin.Context) {
 	})
 }
 
-type FilmResponse struct {
-	ID            int     `json:"id"`
-	Name          string  `json:"name"`
-	Genre         string  `json:"genre"`
-	Director_Name string  `json:"director_name"`
-	Rate          float32 `json:"rate"`
-	Year          int     `json:"year"`
-	Minutes       int     `json:"minutes"`
-}
-
 //example: /film/?filter=genre,=,'fantasy':rate,>,8.4&sort=rate,year,minutes&limit=3&offset=2
+//example: /film/?genre=fantasy,action,drama&rate=6-8.6&sort=minutes,rate,year&limit=9&offset=1
+//example: /film/price=490-600;producer=nike;sort=cheap/
 //example: SELECT * FROM film WHERE genre = 'fantasy' AND rate > 8.4 ORDER BY rate, year, minutes LIMIT 3 OFFSET 2;
-type getAllFilmsResponse struct {
-	Data []entities.FilmFromDB `json:"data"`
-}
+//Select f.id, f.name, d.name From film f Join director d ON f.director_id = d.id
+//Select * From film f Join director d ON f.director_id = d.id
 
 func (h *Handler) GetAllFilms(c *gin.Context) {
 
 	var params entities.QueryParams
 
-	params.Filter = c.Query("filter")
+	params.Rate = c.Query("rate")
+	params.Genre = c.Query("genre")
 	params.Sort = c.Query("sort")
 	params.Limit = c.Query("limit")
 	params.Offset = c.Query("offset")
@@ -167,7 +159,7 @@ func (h *Handler) GetAllFilms(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, getAllFilmsResponse{
+	c.JSON(http.StatusOK, entities.GetAllFilmsResponse{
 		Data: filmList,
 	})
 
@@ -196,23 +188,7 @@ func (h *Handler) GetFilmByID(c *gin.Context) {
 		return
 	}
 
-	director_name, err := h.usecases.GetDirectorName(film.Director_id)
-	if err != nil {
-		newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalSeverErr, Details: err.Error()})
-		return
-	}
-
-	userResp := FilmResponse{
-		ID:            film.ID,
-		Name:          film.Name,
-		Genre:         film.Genre,
-		Director_Name: director_name,
-		Rate:          film.Rate,
-		Year:          film.Year,
-		Minutes:       film.Minutes,
-	}
-
-	c.JSON(http.StatusOK, userResp)
+	c.JSON(http.StatusOK, film)
 }
 
 type FilmList struct {
