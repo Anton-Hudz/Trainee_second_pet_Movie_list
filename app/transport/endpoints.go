@@ -161,17 +161,6 @@ func (h *Handler) GetAllFilms(c *gin.Context) {
 	c.JSON(http.StatusOK, entities.GetAllFilmsResponse{
 		Data: filmList,
 	})
-
-	// 	SELECT * from users
-	// select * from film
-	// select * from director
-	// SELECT name FROM director WHERE id=1
-	// select * from film limit 8 OFFSET 5
-	// select * from film where id > 6 limit 8
-	// select * from film where year >= 2000 AND year < 2008 order by rate,name limit null OFFSET null
-	// select * from film where year >= 2000 AND rate > 8.4 order by rate, name limit null OFFSET null
-	// select * from film where genre = 'fantasy' AND rate > 8.4 order by rate, year, minutes desc limit null OFFSET null
-	// genre,=,fantasy:rate,>,8.4:rate,>,8.4
 }
 
 func (h *Handler) GetFilmByID(c *gin.Context) {

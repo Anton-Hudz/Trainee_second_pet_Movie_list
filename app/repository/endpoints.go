@@ -173,6 +173,7 @@ func (r *Repo) GetFilmById(id int) (entities.FilmResponse, error) {
 
 func (r *Repo) GetAllFilms(SQL string) ([]entities.FilmResponse, error) {
 	var films []entities.FilmResponse
+	var count int = 0
 
 	rows, err := r.DB.Query(SQL)
 	if err != nil {
@@ -187,8 +188,11 @@ func (r *Repo) GetAllFilms(SQL string) ([]entities.FilmResponse, error) {
 		if err := rows.Scan(&film.ID, &film.Name, &film.Genre, &film.Director_Name, &film.Rate, &film.Year, &film.Minutes); err != nil {
 			return nil, fmt.Errorf("error occurred while scaning object from query: %w", err)
 		}
-
+		count++
 		films = append(films, film)
+	}
+	if count == 0 {
+		return nil, errors.New("no data found, perhaps you made mistakes in genre or movie isn't in DB")
 	}
 
 	if err = rows.Err(); err != nil {
