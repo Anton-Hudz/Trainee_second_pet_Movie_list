@@ -21,7 +21,7 @@ type FilmUseCase interface {
 	AddToWishlist(userID any, filmID int) (int, error)
 	GetFilmById(id int) (entities.FilmResponse, error)
 	MakeQuery(params entities.QueryParams) (string, error)
-	GetFilmList(query string) ([]entities.FilmFromDB, error)
+	GetFilmList(query string) ([]entities.FilmResponse, error)
 }
 
 type UseCase struct {
