@@ -1,6 +1,7 @@
 package transport
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -141,6 +142,7 @@ func (h *Handler) GetAllFilms(c *gin.Context) {
 
 	params.Format = c.Query("format")
 	params.Genre = c.Query("genre")
+	params.Rate = c.Query("rate")
 	params.Sort = c.Query("sort")
 	params.Limit = c.Query("limit")
 	params.Offset = c.Query("offset")
