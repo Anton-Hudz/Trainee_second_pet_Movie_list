@@ -156,16 +156,16 @@ func (r *Repo) GetFilmID(filmName string) (int, error) {
 	return id, nil
 }
 
-func (r *Repo) GetFilmById(id int) (entities.FilmFromDB, error) {
-	var film entities.FilmFromDB
-	SQL := fmt.Sprintf(`SELECT id, name, genre, director_id, rate, year, minutes FROM %s WHERE id=$1;`, filmTable)
+func (r *Repo) GetFilmById(id int) (entities.FilmResponse, error) {
+	var film entities.FilmResponse
+	SQL := fmt.Sprintf(`SELECT f.id, f.name, f.genre, d.name, f.rate, f.year, f.minutes FROM %s f Join %s d ON f.director_id = d.id WHERE f.id=$1;`, filmTable, directorTable)
 
-	if err := r.DB.QueryRow(SQL, id).Scan(&film.ID, &film.Name, &film.Genre, &film.Director_id, &film.Rate, &film.Year, &film.Minutes); err != nil {
+	if err := r.DB.QueryRow(SQL, id).Scan(&film.ID, &film.Name, &film.Genre, &film.Director_Name, &film.Rate, &film.Year, &film.Minutes); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return entities.FilmFromDB{}, globals.ErrNotFound
+			return entities.FilmResponse{}, globals.ErrNotFound
 		}
 
-		return entities.FilmFromDB{}, fmt.Errorf("internal error while scanning row: %w", err)
+		return entities.FilmResponse{}, fmt.Errorf("internal error while scanning row: %w", err)
 	}
 
 	return film, nil
@@ -196,21 +196,6 @@ func (r *Repo) GetAllFilms(SQL string) ([]entities.FilmFromDB, error) {
 	}
 
 	return films, nil
-}
-
-func (r *Repo) GetDirectorName(id int) (string, error) {
-	var name string
-	SQL := fmt.Sprintf(`SELECT name FROM %s WHERE id=$1`, directorTable)
-
-	if err := r.DB.QueryRow(SQL, id).Scan(&name); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return "", globals.ErrNotFound
-		}
-
-		return "", fmt.Errorf("internal error while scanning row: %w", err)
-	}
-
-	return name, nil
 }
 
 func (r *Repo) AddMovieToList(userID any, filmID int, table string) (int, error) {
