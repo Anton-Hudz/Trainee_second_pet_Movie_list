@@ -191,6 +191,7 @@ func (r *Repo) GetAllFilms(SQL string) ([]entities.FilmResponse, error) {
 		count++
 		films = append(films, film)
 	}
+
 	if count == 0 {
 		return nil, errors.New("no data found, perhaps you made mistakes in genre or movie isn't in DB")
 	}
