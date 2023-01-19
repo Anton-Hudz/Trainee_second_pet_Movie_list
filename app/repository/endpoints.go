@@ -10,7 +10,6 @@ import (
 	"github.com/Anton-Hudz/MovieList/app/entities"
 	"github.com/Anton-Hudz/MovieList/app/globals"
 	"github.com/lib/pq"
-	// _ "github.com/lib/pq"
 )
 
 const ErrCodeUniqueViolation = "unique_violation"
