@@ -17,19 +17,3 @@ type Film struct {
 	Year          string `json:"year"`
 	Minutes       string `json:"minutes"`
 }
-
-type Director struct {
-	ID            int    `json:"id"`
-	Name          string `json:"name"`
-	Date_of_birth string `json:"date_of_birth"`
-}
-
-type Favourites struct {
-	User_ID int `json:"user_id"`
-	Film_ID int `json:"film_id"`
-}
-
-type Wishlist struct {
-	User_ID int `json:"user_id"`
-	Film_ID int `json:"film_id"`
-}

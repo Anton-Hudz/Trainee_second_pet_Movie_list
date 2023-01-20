@@ -9,8 +9,8 @@ import (
 
 const (
 	usersTable     = "users"
-	filmTable      = "film"
-	directorTable  = "director"
+	filmTable      = "films"
+	directorTable  = "directors"
 	FavouriteTable = "favourite"
 	WishlistTable  = "wishlist"
 )

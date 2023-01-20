@@ -1,7 +1,6 @@
 package transport
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -130,7 +129,7 @@ func (h *Handler) CreateFilm(c *gin.Context) {
 	})
 }
 
-//example: film/?genre=fantasy,action,drama&rate=7-8.6&sort=minutes,rate,year&limit=5&offset=0
+//example: film/?format=csv&genre=fantasy,action,drama&rate=7-8.6&sort=minutes,rate,year&limit=9&offset=0
 //
 //example: SELECT f.id, f.name, f.genre, d.name, f.rate, f.year, f.minutes FROM film f JOIN director d
 //ON f.director_id = d.id WHERE genre IN ('fantasy','action','drama') AND (rate >= 7 AND rate <= 8.6)
@@ -173,8 +172,9 @@ func (h *Handler) GetAllFilms(c *gin.Context) {
 			return
 		}
 		c.Data(http.StatusOK, "csv", CSV)
+
 	default:
-		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
+		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: "Problem with format of output data"})
 		return
 	}
 }
