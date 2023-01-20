@@ -11,7 +11,7 @@ import (
 
 func createQuery(params entities.QueryParams) (string, error) {
 	var (
-		query        string = `SELECT f.id, f.name, f.genre, d.name, f.rate, f.year, f.minutes FROM film f JOIN director d ON f.director_id = d.id `
+		query        string = `SELECT f.id, f.name, f.genre, d.name, f.rate, f.year, f.minutes FROM films f JOIN directors d ON f.director_id = d.id `
 		SQL          string
 		defaultLimit int = 5
 	)

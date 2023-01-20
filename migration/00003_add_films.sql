@@ -1,6 +1,6 @@
 -- +migrate Up
 -- SQL in section 'Up' is executed when this migration is applied
-INSERT INTO film (name, genre, director_id, rate, year, minutes)
+INSERT INTO films (name, genre, director_id, rate, year, minutes)
 VALUES ('Avatar', 'fantasy', 1, 8.62, 2009, 162), 
 ('Titanic', 'drama', 1, 7.16, 2000, 120),
 ('Shindlers List', 'drama', 2, 8.9, 1993, 180),
@@ -15,4 +15,4 @@ VALUES ('Avatar', 'fantasy', 1, 8.62, 2009, 162),
 -- SQL section 'Down' is executed when this migration is rolled back
 DELETE from wishlist;
 DELETE from favourite;
-DELETE from film;
+DELETE from films;
