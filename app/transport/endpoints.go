@@ -31,13 +31,8 @@ func (h *Handler) CreateUser(c *gin.Context) {
 	})
 }
 
-type LogInInput struct {
-	Login    string `json:"login" binding:"required"`
-	Password string `json:"password" binding:"required"`
-}
-
 func (h *Handler) LogIn(c *gin.Context) {
-	var input LogInInput
+	var input entities.LogInInput
 
 	if err := c.BindJSON(&input); err != nil {
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
@@ -195,14 +190,10 @@ func (h *Handler) GetFilmByID(c *gin.Context) {
 	c.JSON(http.StatusOK, film)
 }
 
-type FilmList struct {
-	Name string `json:"name"`
-}
-
 func (h *Handler) AddToFavourite(c *gin.Context) {
 	userId, _ := c.Get(userCtx)
 
-	var filmName FilmList
+	var filmName entities.FilmList
 	if err := c.BindJSON(&filmName); err != nil {
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
 
@@ -231,7 +222,7 @@ func (h *Handler) AddToFavourite(c *gin.Context) {
 func (h *Handler) AddToWishlist(c *gin.Context) {
 	userId, _ := c.Get(userCtx)
 
-	var filmName FilmList
+	var filmName entities.FilmList
 	if err := c.BindJSON(&filmName); err != nil {
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
 
