@@ -15,7 +15,7 @@ func NewHandler(usecases *usecase.UseCase) *Handler {
 
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
-	users := router.Group("/users")
+	users := router.Group("/user")
 	{
 		users.POST("/sign-up", h.CreateUser)
 		users.POST("/sign-in", h.LogIn)

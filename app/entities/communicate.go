@@ -1,12 +1,7 @@
 package entities
 
-type QueryParams struct {
-	Format string
-	Genre  string
-	Rate   string
-	Sort   string
-	Limit  string
-	Offset string
+type FilmList struct {
+	Name string `json:"name"`
 }
 
 type FilmResponse struct {
@@ -21,4 +16,17 @@ type FilmResponse struct {
 
 type GetAllFilmsResponse struct {
 	Data []FilmResponse `json:"data"`
+}
+
+type LogInInput struct {
+	Login    string `json:"login" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+type QueryParams struct {
+	Format string
+	Genre  string
+	Rate   string
+	Sort   string
+	Limit  string
+	Offset string
 }
