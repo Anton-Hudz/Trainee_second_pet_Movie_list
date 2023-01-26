@@ -13,13 +13,18 @@ import (
 )
 
 const (
-	lenOfLines  = 2
-	envFileName = ".env"
+	lenOfLines      = 2
+	envFileName     = ".env"
+	InfoLogLvl      = "INFO"
+	WarnLogLvl      = "WARN"
+	ErrorLogLvl     = "ERROR"
+	LogLvlConfigKey = "LOG_LEVEL"
 )
 
 type Options struct {
-	Server Server
-	DB     DB
+	LogLevel string
+	Server   Server
+	DB       DB
 }
 
 type Server struct {
@@ -78,6 +83,7 @@ func GetConfig() (Options, error) {
 	}
 
 	opt := Options{
+		LogLevel: os.Getenv(LogLvlConfigKey),
 		Server: Server{
 			Host: os.Getenv("SERV_HOST"),
 			Port: os.Getenv("SERV_PORT"),

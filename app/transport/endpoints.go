@@ -8,6 +8,7 @@ import (
 	"github.com/Anton-Hudz/MovieList/app/entities"
 	"github.com/gin-gonic/gin"
 	"github.com/gocarina/gocsv"
+	"github.com/sirupsen/logrus"
 )
 
 func (h *Handler) CreateUser(c *gin.Context) {
@@ -166,6 +167,8 @@ func (h *Handler) GetAllFilms(c *gin.Context) {
 			newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalSeverErr, Details: err.Error()})
 			return
 		}
+		aaa := "bad boys"
+		logrus.Infof("LIST is CSV sended %+v", aaa)
 		c.Data(http.StatusOK, "csv", CSV)
 
 	default:
