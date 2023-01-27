@@ -8,3 +8,6 @@ db:
   username: "db_user"
   dbname: "movielist"
   sslmode: "disable"
+
+logger:
+  loglevel: "error"
