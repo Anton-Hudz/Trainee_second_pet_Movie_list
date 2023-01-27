@@ -13,12 +13,11 @@ import (
 )
 
 const (
-	lenOfLines      = 2
-	envFileName     = ".env"
-	InfoLogLvl      = "INFO"
-	WarnLogLvl      = "WARN"
-	ErrorLogLvl     = "ERROR"
-	LogLvlConfigKey = "LOG_LEVEL"
+	lenOfLines  = 2
+	envFileName = ".env"
+	InfoLogLvl  = "INFO"
+	WarnLogLvl  = "WARN"
+	ErrorLogLvl = "ERROR"
 )
 
 type Options struct {
@@ -83,7 +82,7 @@ func GetConfig() (Options, error) {
 	}
 
 	opt := Options{
-		LogLevel: os.Getenv(LogLvlConfigKey),
+		LogLevel: os.Getenv("LOG_LEVEL"),
 		Server: Server{
 			Host: os.Getenv("SERV_HOST"),
 			Port: os.Getenv("SERV_PORT"),
@@ -108,6 +107,7 @@ func GetViperConfig() (Options, error) {
 	}
 
 	opt := Options{
+		LogLevel: viper.GetString("logger.loglevel"),
 		Server: Server{
 			Host: viper.GetString("server.host"),
 			Port: viper.GetString("server.port"),
