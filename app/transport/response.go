@@ -1,10 +1,10 @@
 package transport
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 type Response struct {
@@ -15,7 +15,7 @@ type Response struct {
 func newResponse(c *gin.Context, statusCode int, data any) {
 	if data == nil {
 		if statusCode != http.StatusNoContent {
-			log.Printf("Invalid data, expected nil")
+			logrus.Error("Invalid data, expected nil")
 		}
 
 		return
