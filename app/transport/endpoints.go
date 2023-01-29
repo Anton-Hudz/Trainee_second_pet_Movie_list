@@ -240,6 +240,7 @@ func (h *Handler) AddToFavourite(c *gin.Context) {
 
 	var filmName entities.FilmList
 	if err := c.BindJSON(&filmName); err != nil {
+		logrus.Warnf("Attempt to add movie to favourite list: %v. User ID: %v. Film: %v", err, userId, filmName.Name)
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
 
 		return
@@ -247,6 +248,7 @@ func (h *Handler) AddToFavourite(c *gin.Context) {
 
 	filmID, err := h.usecases.GetFilmID(filmName.Name)
 	if err != nil {
+		logrus.Warnf("Attempt to add movie to favourite list: %v. User ID: %v. Film: %v", err, userId, filmName.Name)
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
 
 		return
@@ -254,11 +256,13 @@ func (h *Handler) AddToFavourite(c *gin.Context) {
 
 	id, err := h.usecases.AddFilmToFavourite(userId, filmID)
 	if err != nil {
+		logrus.Errorf("Attempt to add movie to favourite list: %v. User ID: %v. Film: %v", err, userId, filmName.Name)
 		newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalServerErr, Details: err.Error()})
 
 		return
 	}
 
+	logrus.Infof("Movie successfully added to favourite list. User ID: %v. Film ID: %v. ID in list: %v", userId, filmID, id)
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"film's id in my favourite list": id,
 	})
@@ -269,6 +273,7 @@ func (h *Handler) AddToWishlist(c *gin.Context) {
 
 	var filmName entities.FilmList
 	if err := c.BindJSON(&filmName); err != nil {
+		logrus.Warnf("Attempt to add movie to wish list: %v. User ID: %v. Film: %v", err, userId, filmName.Name)
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
 
 		return
@@ -276,6 +281,7 @@ func (h *Handler) AddToWishlist(c *gin.Context) {
 
 	filmID, err := h.usecases.GetFilmID(filmName.Name)
 	if err != nil {
+		logrus.Warnf("Attempt to add movie to wish list: %v. User ID: %v. Film: %v", err, userId, filmName.Name)
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
 
 		return
@@ -283,11 +289,13 @@ func (h *Handler) AddToWishlist(c *gin.Context) {
 
 	id, err := h.usecases.AddToWishlist(userId, filmID)
 	if err != nil {
+		logrus.Errorf("Attempt to add movie to wish list: %v. User ID: %v. Film: %v", err, userId, filmName.Name)
 		newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalServerErr, Details: err.Error()})
 
 		return
 	}
 
+	logrus.Infof("Movie successfully added to wish list. User ID: %v. Film ID: %v. ID in list: %v", userId, filmID, id)
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"film's id in my wish list": id,
 	})
