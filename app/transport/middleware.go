@@ -33,7 +33,7 @@ func (h *Handler) UserIdentity(c *gin.Context) {
 
 	userId, userRole, err := h.usecases.UserUseCase.ParseToken(headerParts[1])
 	if err != nil {
-		logrus.Warn(err)
+		logrus.Warnf("Attempt to gain access. %v", err)
 		newResponse(c, http.StatusUnauthorized, Response{Message: MsgProblemWithParseToken, Details: err.Error()})
 
 		return

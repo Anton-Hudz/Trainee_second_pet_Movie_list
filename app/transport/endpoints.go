@@ -172,8 +172,11 @@ func (h *Handler) GetAllFilms(c *gin.Context) {
 	params.Limit = c.Query("limit")
 	params.Offset = c.Query("offset")
 
+	userId, _ := c.Get(userCtx)
+
 	SQL, err := h.usecases.MakeQuery(params)
 	if err != nil {
+		logrus.Warnf("Attempt to get film list: %v. User ID: %v", err, userId)
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
 
 		return
@@ -181,6 +184,7 @@ func (h *Handler) GetAllFilms(c *gin.Context) {
 
 	filmList, err := h.usecases.GetFilmList(SQL)
 	if err != nil {
+		logrus.Warnf("Attempt to get film list: %v. User ID: %v", err, userId)
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
 
 		return
@@ -188,6 +192,7 @@ func (h *Handler) GetAllFilms(c *gin.Context) {
 
 	switch params.Format {
 	case "json":
+		logrus.Infof("LIST is JSON successfully sended. User: %+v", userId)
 		c.JSON(http.StatusOK, entities.GetAllFilmsResponse{
 			Data: filmList,
 		})
@@ -197,12 +202,13 @@ func (h *Handler) GetAllFilms(c *gin.Context) {
 			newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalServerErr, Details: err.Error()})
 			return
 		}
-		aaa := "bad boys"
-		logrus.Infof("LIST is CSV sended %+v", aaa)
+
+		logrus.Infof("LIST is CSV successfully sended. User: %+v", userId)
 		c.Data(http.StatusOK, "csv", CSV)
 
 	default:
-		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: "Problem with format of output data"})
+		logrus.Warnf("Attempt to get film list: %v. User ID: %v", MsgProblemFormatOutputData, userId)
+		newResponse(c, http.StatusBadRequest, Response{Message: MsgProblemFormatOutputData, Details: "Format is empty or incorrect"})
 		return
 	}
 }
