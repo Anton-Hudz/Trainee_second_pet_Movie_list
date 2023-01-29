@@ -192,18 +192,19 @@ func (h *Handler) GetAllFilms(c *gin.Context) {
 
 	switch params.Format {
 	case "json":
-		logrus.Infof("LIST is JSON successfully sended. User: %+v", userId)
+		logrus.Infof("List is JSON successfully sended. User ID: %+v", userId)
 		c.JSON(http.StatusOK, entities.GetAllFilmsResponse{
 			Data: filmList,
 		})
 	case "csv":
 		CSV, err = gocsv.MarshalBytes(filmList)
 		if err != nil {
+			logrus.Errorf("Attempt to get film list: %v. User ID: %v", err, userId)
 			newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalServerErr, Details: err.Error()})
 			return
 		}
 
-		logrus.Infof("LIST is CSV successfully sended. User: %+v", userId)
+		logrus.Infof("List is CSV successfully sended. User ID: %+v", userId)
 		c.Data(http.StatusOK, "csv", CSV)
 
 	default:
@@ -214,18 +215,23 @@ func (h *Handler) GetAllFilms(c *gin.Context) {
 }
 
 func (h *Handler) GetFilmByID(c *gin.Context) {
+	userId, _ := c.Get(userCtx)
+
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
+		logrus.Warnf("Attempt to get film by ID: %v. User ID: %v", MsgInvalidIDParam, userId)
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgInvalidIDParam})
 		return
 	}
 
 	film, err := h.usecases.GetFilmById(id)
 	if err != nil {
+		logrus.Warnf("Attempt to get film by ID: %v. User ID: %v", err, userId)
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
 		return
 	}
 
+	logrus.Infof("Movie successfully received. User ID: %v. Film ID: %v", userId, id)
 	c.JSON(http.StatusOK, film)
 }
 
