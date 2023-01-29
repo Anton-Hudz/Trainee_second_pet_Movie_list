@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/Anton-Hudz/MovieList/app/repository"
 	"github.com/Anton-Hudz/MovieList/app/transport"
@@ -19,18 +19,24 @@ func main() {
 	////variant vith .env
 	// config, err := cfg.GetConfig()
 	// if err != nil {
-	// 	fmt.Printf("Failed to get config: %s", err)
+	// 	log.Printf("Failed to get config: %s", err)
+
+	// return
 	// }
+
 	// if err := logger.CustomLogger(config.LogLevel); err != nil {
-	// 	fmt.Printf("Failed to create logger: %s", err)
+	// 	log.Printf("Failed to create logger: %s", err)
 
 	// 	return
 	// }
+
 	// db, err := repository.ConnectDB(config.DB)
 	// if err != nil {
-	// 	logrus.Errorf("%+v", err)
-	// 	fmt.Printf("Error connecting to database on host: %s, port: %s, with error: %s", config.DB.Host, config.DB.Port, err)
+	// 	logrus.Errorf("Error connecting to database on host: %s, port: %s, with error: %s", config.DB.Host, config.DB.Port, err)
+
+	// return
 	// }
+
 	// repos := repository.NewRepository(db)
 	// usecase := usecase.NewUseCase(repos)
 	// handlers := transport.NewHandler(usecase)
@@ -41,28 +47,33 @@ func main() {
 	// logrus.Infof("Server started on port: %v", config.Server.Port)
 	// if err := srv.Run(config.Server.Port, handlers.InitRoutes()); err != nil {
 	// 	logrus.Fatalf("Error occured while runnning server: %w", err.Error())
+
+	// return
 	// }
 
 	////variant with viper and .yml
 	if err := cfg.InitConfig(); err != nil {
-		fmt.Printf("Failed to get config: %s", err.Error())
+		log.Printf("Failed to get config: %s", err.Error())
+
+		return
 	}
 
-	config, err := cfg.GetViperConfig() // передавать сюда лог левел
+	config, err := cfg.GetViperConfig()
 	if err != nil {
-		fmt.Printf("Failed to get Viper config: %s", err)
+		log.Printf("Failed to get Viper config: %s", err)
+
+		return
 	}
 
 	if err := logger.CustomLogger(config.LogLevel); err != nil {
-		fmt.Printf("Failed to create logger: %s", err)
+		log.Printf("Failed to create logger: %s", err)
 
 		return
 	}
 
 	db, err := repository.ConnectDB(config.DB)
 	if err != nil {
-		logrus.Errorf("%+v", err)
-		fmt.Printf("Error connecting to database on host: %s, port: %s, with error: %s", viper.GetString("db.host"), viper.GetString("db.port"), err)
+		logrus.Errorf("Error connecting to database on host: %s, port: %s, with error: %s", viper.GetString("db.host"), viper.GetString("db.port"), err)
 
 		return
 	}
@@ -76,5 +87,7 @@ func main() {
 	logrus.Infof("Server started on port: %v", config.Server.Port)
 	if err := srv.Run(viper.GetString("server.port"), handlers.InitRoutes()); err != nil {
 		logrus.Fatalf("Error occured while runnning server: %w", err.Error())
+
+		return
 	}
 }

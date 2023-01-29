@@ -15,9 +15,6 @@ import (
 const (
 	lenOfLines  = 2
 	envFileName = ".env"
-	InfoLogLvl  = "INFO"
-	WarnLogLvl  = "WARN"
-	ErrorLogLvl = "ERROR"
 )
 
 type Options struct {

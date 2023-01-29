@@ -1,7 +1,7 @@
 package transport
 
 const (
-	MsgInternalSeverErr      = "Internal server error"
+	MsgInternalServerErr     = "Internal server error"
 	MsgBadRequest            = "Bad request"
 	MsgNotFound              = "Not found"
 	MsgEmptyAuthHeader       = "Empty authorization header"

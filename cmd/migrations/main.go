@@ -53,6 +53,8 @@ func main() {
 
 	if err := migrateDB(db, *direction); err != nil {
 		logrus.Errorf("Failed making migrations: %v", err)
+
+		return
 	}
 }
 
@@ -68,6 +70,7 @@ func migrateDB(db *sql.DB, direction string) error {
 
 	n, err := migrate.Exec(db, "postgres", migrations, dir)
 	if err != nil {
+
 		return fmt.Errorf("migration up failed: %w", err)
 	}
 	logrus.Infof("Number of applied migration is: %d", n)
