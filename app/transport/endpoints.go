@@ -246,7 +246,7 @@ func (h *Handler) AddToFavourite(c *gin.Context) {
 		return
 	}
 
-	filmID, err := h.usecases.GetFilmID(filmName.Name)
+	id, err := h.usecases.AddFilmToFavourite(userId, filmName.Name)
 	if err != nil {
 		logrus.Warnf("Attempt to add movie to favourite list: %v. User ID: %v. Film: %v", err, userId, filmName.Name)
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
@@ -254,15 +254,7 @@ func (h *Handler) AddToFavourite(c *gin.Context) {
 		return
 	}
 
-	id, err := h.usecases.AddFilmToFavourite(userId, filmID)
-	if err != nil {
-		logrus.Errorf("Attempt to add movie to favourite list: %v. User ID: %v. Film: %v", err, userId, filmName.Name)
-		newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalServerErr, Details: err.Error()})
-
-		return
-	}
-
-	logrus.Infof("Movie successfully added to favourite list. User ID: %v. Film ID: %v. ID in list: %v", userId, filmID, id)
+	logrus.Infof("Movie successfully added to favourite list. User ID: %v. Film: %v. ID in list: %v", userId, filmName.Name, id)
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"film's id in my favourite list": id,
 	})
@@ -279,7 +271,7 @@ func (h *Handler) AddToWishlist(c *gin.Context) {
 		return
 	}
 
-	filmID, err := h.usecases.GetFilmID(filmName.Name)
+	id, err := h.usecases.AddFilmToWishlist(userId, filmName.Name)
 	if err != nil {
 		logrus.Warnf("Attempt to add movie to wish list: %v. User ID: %v. Film: %v", err, userId, filmName.Name)
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
@@ -287,15 +279,7 @@ func (h *Handler) AddToWishlist(c *gin.Context) {
 		return
 	}
 
-	id, err := h.usecases.AddToWishlist(userId, filmID)
-	if err != nil {
-		logrus.Errorf("Attempt to add movie to wish list: %v. User ID: %v. Film: %v", err, userId, filmName.Name)
-		newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalServerErr, Details: err.Error()})
-
-		return
-	}
-
-	logrus.Infof("Movie successfully added to wish list. User ID: %v. Film ID: %v. ID in list: %v", userId, filmID, id)
+	logrus.Infof("Movie successfully added to wish list. User ID: %v. Film: %v. ID in list: %v", userId, filmName.Name, id)
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"film's id in my wish list": id,
 	})

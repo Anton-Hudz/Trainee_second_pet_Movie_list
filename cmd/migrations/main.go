@@ -30,7 +30,7 @@ func main() {
 	}
 
 	if err := logger.CustomLogger(config.LogLevel); err != nil {
-		fmt.Printf("Failed to create logger: %s", err)
+		log.Printf("Failed to create logger: %s", err)
 
 		return
 	}
