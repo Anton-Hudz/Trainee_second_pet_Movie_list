@@ -173,15 +173,6 @@ func (f *FilmService) AddFilm(film entities.Film, directorId int) (int, error) {
 	return id, nil
 }
 
-func (f *FilmService) GetFilmID(filmName string) (int, error) {
-	id, err := f.Repo.GetFilmID(filmName)
-	if err != nil {
-		return 0, fmt.Errorf("error occured while getting film ID: %w", err)
-	}
-
-	return id, nil
-}
-
 func (f *FilmService) MakeQuery(params entities.QueryParams) (string, error) {
 	SQL, err := createQuery(params)
 	if err != nil {
@@ -210,8 +201,8 @@ func (f *FilmService) GetFilmById(id int) (entities.FilmResponse, error) {
 	return film, nil
 }
 
-func (f *FilmService) AddFilmToFavourite(userID any, filmID int) (int, error) {
-	id, err := f.Repo.AddMovieToList(userID, filmID, repository.FavouriteTable)
+func (f *FilmService) AddFilmToFavourite(userID any, filmName string) (int, error) {
+	id, err := f.Repo.AddMovieToList(userID, filmName, repository.FavouriteTable)
 	if err != nil {
 		return 0, fmt.Errorf("error occured while added movie to favourite list: %w", err)
 	}
@@ -219,8 +210,8 @@ func (f *FilmService) AddFilmToFavourite(userID any, filmID int) (int, error) {
 	return id, nil
 }
 
-func (f *FilmService) AddToWishlist(userID any, filmID int) (int, error) {
-	id, err := f.Repo.AddMovieToList(userID, filmID, repository.WishlistTable)
+func (f *FilmService) AddFilmToWishlist(userID any, filmName string) (int, error) {
+	id, err := f.Repo.AddMovieToList(userID, filmName, repository.WishlistTable)
 	if err != nil {
 		return 0, fmt.Errorf("error occured while added movie to wish list: %w", err)
 	}

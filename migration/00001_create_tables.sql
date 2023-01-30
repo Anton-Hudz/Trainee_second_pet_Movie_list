@@ -32,14 +32,16 @@ CREATE TABLE "films" (
 
 CREATE TABLE "favourite" (
     "id" serial not null unique,
-    "user_id" int references "users" (id),
-    "film_id" int references "films" (id)
+    "user_id" int references "users" (id) not null,
+    "film_id" int references "films" (id) not null,
+    PRIMARY KEY("user_id", "film_id")
 );
 
 CREATE TABLE "wishlist" (
     "id" serial not null unique,
-    "user_id" int references "users" (id),
-    "film_id" int references "films" (id)
+    "user_id" int references "users" (id) not null,
+    "film_id" int references "films" (id) not null,
+    PRIMARY KEY("user_id", "film_id")
 );
 
 -- +migrate Down

@@ -12,7 +12,10 @@ import (
 	"github.com/lib/pq"
 )
 
-const ErrCodeUniqueViolation = "unique_violation"
+const (
+	ErrCodeUniqueViolation  = "unique_violation"
+	ErrCodeNotNullViolation = "not_null_violation"
+)
 
 type Repo struct {
 	DB *sql.DB
@@ -140,21 +143,6 @@ func (r *Repo) AddMovie(film entities.Film, directorId int) (int, error) {
 	return id, nil
 }
 
-func (r *Repo) GetFilmID(filmName string) (int, error) {
-	var id int
-	SQL := fmt.Sprintf(`SELECT id FROM %s WHERE name=$1`, filmTable)
-
-	if err := r.DB.QueryRow(SQL, filmName).Scan(&id); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return 0, globals.ErrNotFound
-		}
-
-		return 0, fmt.Errorf("internal error while scanning row: %w", err)
-	}
-
-	return id, nil
-}
-
 func (r *Repo) GetFilmById(id int) (entities.FilmResponse, error) {
 	var film entities.FilmResponse
 	SQL := fmt.Sprintf(`SELECT f.id, f.name, f.genre, d.name, f.rate, f.year, f.minutes FROM %s f Join %s d ON f.director_id = d.id WHERE f.id=$1;`, filmTable, directorTable)
@@ -202,13 +190,18 @@ func (r *Repo) GetAllFilms(SQL string) ([]entities.FilmResponse, error) {
 	return films, nil
 }
 
-func (r *Repo) AddMovieToList(userID any, filmID int, table string) (int, error) {
+func (r *Repo) AddMovieToList(userID any, filmName string, table string) (int, error) {
 	var id int
-	SQL := fmt.Sprintf(`INSERT INTO %s (user_id, film_id) values ($1, $2) RETURNING id`, table)
 
-	if err := r.DB.QueryRow(SQL, userID, filmID).Scan(&id); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return 0, globals.ErrNotFound
+	SQL := fmt.Sprintf(`INSERT INTO %s (user_id, film_id) values ($1, (SELECT id FROM films WHERE name = $2)) RETURNING id`, table)
+
+	if err := r.DB.QueryRow(SQL, userID, filmName).Scan(&id); err != nil {
+		pqErr := new(pq.Error)
+		if errors.As(err, &pqErr) && pqErr.Code.Name() == ErrCodeNotNullViolation {
+			return 0, globals.ErrWrongMovieName
+		}
+		if errors.As(err, &pqErr) && pqErr.Code.Name() == ErrCodeUniqueViolation {
+			return 0, globals.ErrDuplicateMovieInList
 		}
 
 		return 0, fmt.Errorf("error inserting into database: %w", err)

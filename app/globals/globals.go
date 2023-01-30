@@ -7,4 +7,6 @@ var (
 	ErrDuplicateFilmName     = errors.New("film is already taken")
 	ErrNotFound              = errors.New("no data found in DB")
 	ErrTokenIsAlreadyDeleted = errors.New("token is already deleted")
+	ErrWrongMovieName        = errors.New("wrong movie name or the movie is not in the database")
+	ErrDuplicateMovieInList  = errors.New("duplicate movie in list")
 )

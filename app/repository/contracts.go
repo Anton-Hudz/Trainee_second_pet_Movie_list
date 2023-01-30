@@ -17,8 +17,7 @@ type UserRepository interface {
 type FilmRepository interface {
 	GetDirectorId(film entities.Film) (int, error)
 	AddMovie(film entities.Film, directorId int) (int, error)
-	GetFilmID(filmName string) (int, error)
-	AddMovieToList(userID any, filmID int, table string) (int, error)
+	AddMovieToList(userID any, filmName string, table string) (int, error)
 	GetFilmById(id int) (entities.FilmResponse, error)
 	GetAllFilms(SQL string) ([]entities.FilmResponse, error)
 }
