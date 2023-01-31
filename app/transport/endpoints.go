@@ -32,6 +32,12 @@ func (h *Handler) CreateUser(c *gin.Context) {
 
 			return
 		}
+		if errors.Is(err, globals.ErrIncorrectUserData) {
+			logrus.Warnf("Attempt to add user with incorect user data: %v.", inputUserData.Login)
+			newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
+
+			return
+		}
 
 		logrus.Errorf("Attempt to add user: %v.", err)
 		newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalServerErr, Details: err.Error()})
