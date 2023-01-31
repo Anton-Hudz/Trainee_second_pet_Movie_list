@@ -201,19 +201,28 @@ func (f *FilmService) GetFilmById(id int) (entities.FilmResponse, error) {
 	return film, nil
 }
 
-func (f *FilmService) AddFilmToFavourite(userID any, filmName string) (int, error) {
-	id, err := f.Repo.AddMovieToList(userID, filmName, repository.FavouriteTable)
-	if err != nil {
-		return 0, fmt.Errorf("error occured while added movie to favourite list: %w", err)
-	}
+// func (f *FilmService) AddFilmToFavourite(userID any, filmName string) (int, error) {
+// 	id, err := f.Repo.AddMovieToList(userID, filmName, repository.FavouriteTable)
+// 	if err != nil {
+// 		return 0, fmt.Errorf("error occured while added movie to favourite list: %w", err)
+// 	}
 
-	return id, nil
-}
+// 	return id, nil
+// }
 
-func (f *FilmService) AddFilmToWishlist(userID any, filmName string) (int, error) {
-	id, err := f.Repo.AddMovieToList(userID, filmName, repository.WishlistTable)
+// func (f *FilmService) AddFilmToWishlist(userID any, filmName string) (int, error) {
+// 	id, err := f.Repo.AddMovieToList(userID, filmName, repository.WishlistTable)
+// 	if err != nil {
+// 		return 0, fmt.Errorf("error occured while added movie to wish list: %w", err)
+// 	}
+
+// 	return id, nil
+// }
+
+func (f *FilmService) AddFilmToList(userID any, filmName, table string) (int, error) {
+	id, err := f.Repo.AddMovieToList(userID, filmName, table)
 	if err != nil {
-		return 0, fmt.Errorf("error occured while added movie to wish list: %w", err)
+		return 0, fmt.Errorf("error occured while added movie to %v: %w", table, err)
 	}
 
 	return id, nil

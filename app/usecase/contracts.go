@@ -16,8 +16,9 @@ type FilmUseCase interface {
 	ValidateFilmData(film entities.Film) error
 	GetDirectorId(film entities.Film) (int, error)
 	AddFilm(film entities.Film, directorId int) (int, error)
-	AddFilmToFavourite(userID any, filmName string) (int, error)
-	AddFilmToWishlist(userID any, filmName string) (int, error)
+	// AddFilmToFavourite(userID any, filmName string) (int, error)
+	// AddFilmToWishlist(userID any, filmName string) (int, error)
+	AddFilmToList(userID any, filmName, table string) (int, error)
 	GetFilmById(id int) (entities.FilmResponse, error)
 	MakeQuery(params entities.QueryParams) (string, error)
 	GetFilmList(query string) ([]entities.FilmResponse, error)

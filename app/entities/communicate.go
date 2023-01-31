@@ -30,3 +30,8 @@ type QueryParams struct {
 	Limit  string
 	Offset string
 }
+
+type ListsComponents struct {
+	List  string
+	Movie string
+}
