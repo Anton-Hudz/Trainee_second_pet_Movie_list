@@ -15,6 +15,7 @@ func NewHandler(usecases *usecase.UseCase) *Handler {
 
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
+	// userId, _ := c.Get(userCtx)
 	users := router.Group("/user")
 	{
 		users.POST("/sign-up", h.CreateUser)
@@ -26,8 +27,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		film.POST("/", h.CreateFilm)
 		film.GET("/", h.GetAllFilms)
 		film.GET("/:id", h.GetFilmByID)
-		film.POST("/favourite", h.AddToFavourite)
-		film.POST("/wishlist", h.AddToWishlist)
+		film.POST("/:id", h.AddToList)
+		// film.POST("/favourite", h.AddToFavourite)
+		// film.POST("/wishlist", h.AddToWishlist)
 	}
 
 	return router
