@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/Anton-Hudz/MovieList/app/entities"
+	"github.com/Anton-Hudz/MovieList/app/globals"
 	"github.com/Anton-Hudz/MovieList/app/repository"
 	"github.com/Anton-Hudz/MovieList/pkg/hash"
 	"github.com/dgrijalva/jwt-go"
@@ -33,8 +34,18 @@ func NewAuthUser(repo repository.UserRepository) *AuthUser {
 
 func (a *AuthUser) AddUser(user entities.User) (int, error) {
 	user.Password = hash.GeneratePasswordHash(user.Password)
-
+	if err := validateUser(user); err != nil {
+		return 0, fmt.Errorf("error occured while validate user data: %w", err)
+	}
 	return a.Repo.AddUser(user)
+}
+func validateUser(user entities.User) error {
+	_, err := strconv.Atoi(user.Login)
+	if err != nil {
+		return globals.ErrIncorrectUserData
+	}
+
+	return nil
 }
 
 func (a *AuthUser) GenerateAddToken(login, password string) (string, int, error) {
