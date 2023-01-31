@@ -37,10 +37,10 @@ func (a *AuthUser) AddUser(user entities.User) (int, error) {
 	return a.Repo.AddUser(user)
 }
 
-func (a *AuthUser) GenerateAddToken(login, password string) (string, error) {
+func (a *AuthUser) GenerateAddToken(login, password string) (string, int, error) {
 	user, err := a.Repo.GetUser(login, hash.GeneratePasswordHash(password))
 	if err != nil {
-		return "", err
+		return "", 0, err
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
@@ -56,10 +56,10 @@ func (a *AuthUser) GenerateAddToken(login, password string) (string, error) {
 
 	err = a.Repo.AddToken(userToken, user)
 	if err != nil {
-		return "", fmt.Errorf("error occured while added token to database: %w", err)
+		return "", 0, fmt.Errorf("error occured while added token to database: %w", err)
 	}
 
-	return userToken, nil
+	return userToken, user.ID, nil
 }
 
 func (a *AuthUser) ParseToken(accessToken string) (int, string, error) {
@@ -200,24 +200,6 @@ func (f *FilmService) GetFilmById(id int) (entities.FilmResponse, error) {
 
 	return film, nil
 }
-
-// func (f *FilmService) AddFilmToFavourite(userID any, filmName string) (int, error) {
-// 	id, err := f.Repo.AddMovieToList(userID, filmName, repository.FavouriteTable)
-// 	if err != nil {
-// 		return 0, fmt.Errorf("error occured while added movie to favourite list: %w", err)
-// 	}
-
-// 	return id, nil
-// }
-
-// func (f *FilmService) AddFilmToWishlist(userID any, filmName string) (int, error) {
-// 	id, err := f.Repo.AddMovieToList(userID, filmName, repository.WishlistTable)
-// 	if err != nil {
-// 		return 0, fmt.Errorf("error occured while added movie to wish list: %w", err)
-// 	}
-
-// 	return id, nil
-// }
 
 func (f *FilmService) AddFilmToList(userID any, filmName, table string) (int, error) {
 	id, err := f.Repo.AddMovieToList(userID, filmName, table)

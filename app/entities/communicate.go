@@ -1,9 +1,5 @@
 package entities
 
-type FilmList struct {
-	Name string `json:"name"`
-}
-
 type FilmResponse struct {
 	ID            int     `json:"id"`
 	Name          string  `json:"name"`
