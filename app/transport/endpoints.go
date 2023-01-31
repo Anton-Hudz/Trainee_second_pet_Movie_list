@@ -54,7 +54,7 @@ func (h *Handler) LogIn(c *gin.Context) {
 		return
 	}
 
-	token, err := h.usecases.GenerateAddToken(input.Login, input.Password)
+	token, id, err := h.usecases.GenerateAddToken(input.Login, input.Password)
 	if err != nil {
 		if errors.Is(err, globals.ErrNotFound) {
 			logrus.Warnf("Attempt to log in user: %v. %v.", input.Login, err)
@@ -68,9 +68,10 @@ func (h *Handler) LogIn(c *gin.Context) {
 		return
 	}
 
-	logrus.Infof("User: %v logging completed successfully, token sended to user", input.Login)
+	logrus.Infof("User: %v ID: %v logging completed successfully, token sended to user", input.Login, id)
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"token": token,
+		"userID": id,
+		"token":  token,
 	})
 }
 
@@ -202,15 +203,16 @@ func (h *Handler) GetAllFilms(c *gin.Context) {
 		if err != nil {
 			logrus.Errorf("Attempt to get film list: %v. User ID: %v", err, userId)
 			newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalServerErr, Details: err.Error()})
+
 			return
 		}
-
 		logrus.Infof("List is CSV successfully sended. User ID: %+v", userId)
 		c.Data(http.StatusOK, "csv", CSV)
 
 	default:
 		logrus.Warnf("Attempt to get film list: %v. User ID: %v", MsgProblemFormatOutputData, userId)
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgProblemFormatOutputData, Details: "Format is empty or incorrect"})
+
 		return
 	}
 }
@@ -275,56 +277,7 @@ func (h *Handler) AddToList(c *gin.Context) {
 	default:
 		logrus.Warnf("Attempt to add film to list: %v. User ID: %v", MsgProblemFieldList, userId)
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgProblemFieldList, Details: "List field is empty or incorrect"})
+
 		return
 	}
 }
-
-// func (h *Handler) AddToFavourite(c *gin.Context) {
-// 	userId, _ := c.Get(userCtx)
-
-// 	var filmName entities.FilmList
-// 	if err := c.BindJSON(&filmName); err != nil {
-// 		logrus.Warnf("Attempt to add movie to favourite list: %v. User ID: %v. Film: %v", err, userId, filmName.Name)
-// 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
-
-// 		return
-// 	}
-
-// 	id, err := h.usecases.AddFilmToFavourite(userId, filmName.Name)
-// 	if err != nil {
-// 		logrus.Warnf("Attempt to add movie to favourite list: %v. User ID: %v. Film: %v", err, userId, filmName.Name)
-// 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
-
-// 		return
-// 	}
-
-// 	logrus.Infof("Movie successfully added to favourite list. User ID: %v. Film: %v. ID in list: %v", userId, filmName.Name, id)
-// 	c.JSON(http.StatusOK, map[string]interface{}{
-// 		"film's id in my favourite list": id,
-// 	})
-// }
-
-// func (h *Handler) AddToWishlist(c *gin.Context) {
-// 	userId, _ := c.Get(userCtx)
-
-// 	var filmName entities.FilmList
-// 	if err := c.BindJSON(&filmName); err != nil {
-// 		logrus.Warnf("Attempt to add movie to wish list: %v. User ID: %v. Film: %v", err, userId, filmName.Name)
-// 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
-
-// 		return
-// 	}
-
-// 	id, err := h.usecases.AddFilmToWishlist(userId, filmName.Name)
-// 	if err != nil {
-// 		logrus.Warnf("Attempt to add movie to wish list: %v. User ID: %v. Film: %v", err, userId, filmName.Name)
-// 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
-
-// 		return
-// 	}
-
-// 	logrus.Infof("Movie successfully added to wish list. User ID: %v. Film: %v. ID in list: %v", userId, filmName.Name, id)
-// 	c.JSON(http.StatusOK, map[string]interface{}{
-// 		"film's id in my wish list": id,
-// 	})
-// }

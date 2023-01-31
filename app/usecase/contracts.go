@@ -7,7 +7,7 @@ import (
 
 type UserUseCase interface {
 	AddUser(user entities.User) (int, error)
-	GenerateAddToken(login, password string) (string, error)
+	GenerateAddToken(login, password string) (string, int, error)
 	ParseToken(token string) (int, string, error)
 	SignOut(userId int, token string) error
 }
@@ -16,8 +16,6 @@ type FilmUseCase interface {
 	ValidateFilmData(film entities.Film) error
 	GetDirectorId(film entities.Film) (int, error)
 	AddFilm(film entities.Film, directorId int) (int, error)
-	// AddFilmToFavourite(userID any, filmName string) (int, error)
-	// AddFilmToWishlist(userID any, filmName string) (int, error)
 	AddFilmToList(userID any, filmName, table string) (int, error)
 	GetFilmById(id int) (entities.FilmResponse, error)
 	MakeQuery(params entities.QueryParams) (string, error)
