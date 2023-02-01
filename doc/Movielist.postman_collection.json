@@ -27,7 +27,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"login\": \"123\",\r\n    \"password\": \"password1\",\r\n    \"age\": \"20\",\r\n    \"user_role\": \"customer\"\r\n}",
+					"raw": "{\r\n    \"login\": \"+380501234567\",\r\n    \"password\": \"password1\",\r\n    \"age\": \"20\",\r\n    \"user_role\": \"customer\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -68,7 +68,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"login\": \"1234\",\r\n    \"password\": \"password1\",\r\n    \"age\": \"20\",\r\n    \"user_role\": \"admin\"\r\n}",
+					"raw": "{\r\n    \"login\": \"+380671234567\",\r\n    \"password\": \"password1\",\r\n    \"age\": \"20\",\r\n    \"user_role\": \"admin\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
