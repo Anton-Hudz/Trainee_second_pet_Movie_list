@@ -14,8 +14,9 @@ import (
 )
 
 const (
-	tokenTTL   = 12 * time.Hour
-	signingKey = "gdajkl156alaflkj"
+	tokenTTL       = 12 * time.Hour
+	signingKey     = "gdajkl156alaflkj"
+	firstLoginItem = 43
 )
 
 type tokenClaims struct {
@@ -40,6 +41,9 @@ func (a *AuthUser) AddUser(user entities.User) (int, error) {
 	return a.Repo.AddUser(user)
 }
 func validateUser(user entities.User) error {
+	if user.Login[0] != firstLoginItem {
+		return globals.ErrIncorrectUserData
+	}
 	_, err := strconv.Atoi(user.Login)
 	if err != nil {
 		return globals.ErrIncorrectUserData
