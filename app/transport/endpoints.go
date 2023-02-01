@@ -81,7 +81,7 @@ func (h *Handler) LogIn(c *gin.Context) {
 	})
 }
 
-func (h *Handler) LogOut(c *gin.Context) {
+func (h *Handler) Logout(c *gin.Context) {
 	header := c.GetHeader(authorizationHeader)
 	if header == "" {
 		logrus.Warnf("Attempt to log out, %v ", MsgEmptyAuthHeader)

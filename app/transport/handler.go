@@ -15,12 +15,11 @@ func NewHandler(usecases *usecase.UseCase) *Handler {
 
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
-	// userId, _ := c.Get(userCtx)
 	users := router.Group("/user")
 	{
 		users.POST("/sign-up", h.CreateUser)
 		users.POST("/sign-in", h.LogIn)
-		users.DELETE("/", h.LogOut)
+		users.DELETE("/", h.Logout)
 	}
 	film := router.Group("/film", h.UserIdentity)
 	{
