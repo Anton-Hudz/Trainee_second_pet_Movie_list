@@ -23,7 +23,7 @@ func (h *Handler) UserIdentity(c *gin.Context) {
 		return
 	}
 
-	headerParts := strings.Split(header, " ")
+	headerParts := strings.Fields(header)
 	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
 		logrus.Warn(MsgInvalidAuthHeader)
 		newResponse(c, http.StatusUnauthorized, Response{Message: MsgInvalidAuthHeader})

@@ -64,7 +64,7 @@ func (a *AuthUser) GenerateAddToken(login, password string) (string, int, error)
 			IssuedAt:  time.Now().Unix(),
 		},
 		user.ID,
-		user.User_Role,
+		user.UserRole,
 	})
 
 	userToken, _ := token.SignedString([]byte(signingKey))

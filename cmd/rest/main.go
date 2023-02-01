@@ -21,7 +21,7 @@ func main() {
 	// if err != nil {
 	// 	log.Printf("Failed to get config: %s", err)
 
-	// return
+	// 	return
 	// }
 
 	// if err := logger.CustomLogger(config.LogLevel); err != nil {
@@ -34,7 +34,7 @@ func main() {
 	// if err != nil {
 	// 	logrus.Errorf("Error connecting to database on host: %s, port: %s, with error: %s", config.DB.Host, config.DB.Port, err)
 
-	// return
+	// 	return
 	// }
 
 	// repos := repository.NewRepository(db)
@@ -48,7 +48,7 @@ func main() {
 	// if err := srv.Run(config.Server.Port, handlers.InitRoutes()); err != nil {
 	// 	logrus.Fatalf("Error occured while runnning server: %w", err.Error())
 
-	// return
+	// 	return
 	// }
 
 	////variant with viper and .yml
@@ -81,7 +81,7 @@ func main() {
 	repo := repository.NewRepository(db)
 	usecase := usecase.NewUseCase(repo)
 	handlers := transport.NewHandler(usecase)
-	logrus.Error("Connection to database successfully created")
+	logrus.Info("Connection to database successfully created")
 
 	srv := new(transport.Server)
 	logrus.Infof("Server started on port: %v", config.Server.Port)
