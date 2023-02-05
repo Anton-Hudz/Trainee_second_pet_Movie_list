@@ -25,7 +25,14 @@ func (h *Handler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	id, err := h.usecases.AddUser(inputUserData)
+	config, err := cfg.GetViperConfig()
+	if err != nil {
+		logrus.Errorf("Failed to get Viper config: %s", err)
+
+		return
+	}
+
+	id, err := h.usecases.AddUser(inputUserData, config.Salt)
 	if err != nil {
 		if errors.Is(err, globals.ErrDuplicateLogin) {
 			logrus.Warnf("Attempt to add user with an existing login: %v.", inputUserData.Login)
@@ -68,7 +75,7 @@ func (h *Handler) LogIn(c *gin.Context) {
 		return
 	}
 
-	token, id, err := h.usecases.GenerateAddToken(input.Login, input.Password, config.SigningKey)
+	token, id, err := h.usecases.GenerateAddToken(input.Login, input.Password, config.SigningKey, config.Salt)
 	if err != nil {
 		if errors.Is(err, globals.ErrNotFound) {
 			logrus.Warnf("Attempt to log in user: %v. %v.", input.Login, err)

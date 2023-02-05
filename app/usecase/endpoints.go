@@ -32,8 +32,8 @@ func NewAuthUser(repo repository.UserRepository) *AuthUser {
 	return &AuthUser{Repo: repo}
 }
 
-func (a *AuthUser) AddUser(user entities.User) (int, error) {
-	user.Password = hash.GeneratePasswordHash(user.Password)
+func (a *AuthUser) AddUser(user entities.User, salt string) (int, error) {
+	user.Password = hash.GeneratePasswordHash(user.Password, salt)
 	if err := validateUser(user); err != nil {
 		return 0, fmt.Errorf("error occured while validate user data: %w", err)
 	}
@@ -51,8 +51,8 @@ func validateUser(user entities.User) error {
 	return nil
 }
 
-func (a *AuthUser) GenerateAddToken(login, password, signingKey string) (string, int, error) {
-	user, err := a.Repo.GetUser(login, hash.GeneratePasswordHash(password))
+func (a *AuthUser) GenerateAddToken(login, password, signingKey, salt string) (string, int, error) {
+	user, err := a.Repo.GetUser(login, hash.GeneratePasswordHash(password, salt))
 	if err != nil {
 		return "", 0, err
 	}
