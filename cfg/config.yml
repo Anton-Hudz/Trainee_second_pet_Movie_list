@@ -11,3 +11,6 @@ db:
 
 logger:
   loglevel: "debug"
+
+token:
+  signingKey: "gdajkl156alaflkj"

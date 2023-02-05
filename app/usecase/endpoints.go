@@ -15,7 +15,6 @@ import (
 
 const (
 	tokenTTL       = 12 * time.Hour
-	signingKey     = "gdajkl156alaflkj"
 	firstLoginItem = 43
 )
 
@@ -52,7 +51,7 @@ func validateUser(user entities.User) error {
 	return nil
 }
 
-func (a *AuthUser) GenerateAddToken(login, password string) (string, int, error) {
+func (a *AuthUser) GenerateAddToken(login, password, signingKey string) (string, int, error) {
 	user, err := a.Repo.GetUser(login, hash.GeneratePasswordHash(password))
 	if err != nil {
 		return "", 0, err
@@ -80,7 +79,7 @@ func (a *AuthUser) GenerateAddToken(login, password string) (string, int, error)
 	return userToken, user.ID, nil
 }
 
-func (a *AuthUser) ParseToken(accessToken string) (int, string, error) {
+func (a *AuthUser) ParseToken(accessToken, signingKey string) (int, string, error) {
 	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
