@@ -18,6 +18,7 @@ const (
 )
 
 type Options struct {
+	Salt       string
 	SigningKey string
 	LogLevel   string
 	Server     Server
@@ -80,6 +81,7 @@ func GetConfig() (Options, error) {
 	}
 
 	opt := Options{
+		Salt:       os.Getenv("SALT"),
 		SigningKey: os.Getenv("SIGNING_KEY"),
 		LogLevel:   os.Getenv("LOG_LEVEL"),
 		Server: Server{
@@ -106,6 +108,7 @@ func GetViperConfig() (Options, error) {
 	}
 
 	opt := Options{
+		Salt:       viper.GetString("hash.salt"),
 		SigningKey: viper.GetString("token.signingKey"),
 		LogLevel:   viper.GetString("logger.loglevel"),
 		Server: Server{

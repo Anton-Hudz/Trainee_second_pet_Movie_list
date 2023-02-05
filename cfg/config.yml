@@ -14,3 +14,6 @@ logger:
 
 token:
   signingKey: "gdajkl156alaflkj"
+
+hash:
+  salt: "qscftyjmkoplmhtf567tfcxsq"

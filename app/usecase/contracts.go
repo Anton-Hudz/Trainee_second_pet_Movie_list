@@ -6,8 +6,8 @@ import (
 )
 
 type UserUseCase interface {
-	AddUser(user entities.User) (int, error)
-	GenerateAddToken(login, password, signingKey string) (string, int, error)
+	AddUser(user entities.User, salt string) (int, error)
+	GenerateAddToken(login, password, signingKey, salt string) (string, int, error)
 	ParseToken(token, signingKey string) (int, string, error)
 	SignOut(userId int, token string) error
 }
