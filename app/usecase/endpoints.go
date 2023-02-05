@@ -67,7 +67,10 @@ func (a *AuthUser) GenerateAddToken(login, password string) (string, int, error)
 		user.UserRole,
 	})
 
-	userToken, _ := token.SignedString([]byte(signingKey))
+	userToken, err := token.SignedString([]byte(signingKey))
+	if err != nil {
+		return "", 0, err
+	}
 
 	err = a.Repo.AddToken(userToken, user)
 	if err != nil {
