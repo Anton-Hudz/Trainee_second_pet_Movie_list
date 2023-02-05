@@ -18,9 +18,10 @@ const (
 )
 
 type Options struct {
-	LogLevel string
-	Server   Server
-	DB       DB
+	SigningKey string
+	LogLevel   string
+	Server     Server
+	DB         DB
 }
 
 type Server struct {
@@ -79,7 +80,8 @@ func GetConfig() (Options, error) {
 	}
 
 	opt := Options{
-		LogLevel: os.Getenv("LOG_LEVEL"),
+		SigningKey: os.Getenv("SIGNING_KEY"),
+		LogLevel:   os.Getenv("LOG_LEVEL"),
 		Server: Server{
 			Host: os.Getenv("SERV_HOST"),
 			Port: os.Getenv("SERV_PORT"),
@@ -104,7 +106,8 @@ func GetViperConfig() (Options, error) {
 	}
 
 	opt := Options{
-		LogLevel: viper.GetString("logger.loglevel"),
+		SigningKey: viper.GetString("token.signingKey"),
+		LogLevel:   viper.GetString("logger.loglevel"),
 		Server: Server{
 			Host: viper.GetString("server.host"),
 			Port: viper.GetString("server.port"),

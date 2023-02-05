@@ -9,6 +9,7 @@ import (
 	"github.com/Anton-Hudz/MovieList/app/entities"
 	"github.com/Anton-Hudz/MovieList/app/globals"
 	"github.com/Anton-Hudz/MovieList/app/repository"
+	"github.com/Anton-Hudz/MovieList/cfg"
 	"github.com/gin-gonic/gin"
 	"github.com/gocarina/gocsv"
 	"github.com/sirupsen/logrus"
@@ -60,7 +61,14 @@ func (h *Handler) LogIn(c *gin.Context) {
 		return
 	}
 
-	token, id, err := h.usecases.GenerateAddToken(input.Login, input.Password)
+	config, err := cfg.GetViperConfig()
+	if err != nil {
+		logrus.Errorf("Failed to get Viper config: %s", err)
+
+		return
+	}
+
+	token, id, err := h.usecases.GenerateAddToken(input.Login, input.Password, config.SigningKey)
 	if err != nil {
 		if errors.Is(err, globals.ErrNotFound) {
 			logrus.Warnf("Attempt to log in user: %v. %v.", input.Login, err)
@@ -98,7 +106,14 @@ func (h *Handler) Logout(c *gin.Context) {
 		return
 	}
 
-	userId, _, err := h.usecases.UserUseCase.ParseToken(headerParts[1])
+	config, err := cfg.GetViperConfig()
+	if err != nil {
+		logrus.Errorf("Failed to get Viper config: %s", err)
+
+		return
+	}
+
+	userId, _, err := h.usecases.UserUseCase.ParseToken(headerParts[1], config.SigningKey)
 	if err != nil {
 		logrus.Warnf("Attempt to log out, %v ", err)
 		newResponse(c, http.StatusUnauthorized, Response{Message: MsgProblemWithParseToken, Details: err.Error()})
