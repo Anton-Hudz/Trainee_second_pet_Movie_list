@@ -39,7 +39,7 @@ func (h *Handler) UserIdentity(c *gin.Context) {
 		return
 	}
 
-	userId, userRole, err := h.usecases.UserUseCase.ParseToken(headerParts[1], config.SigningKey)
+	userId, userRole, err := h.UserUseCase.ParseToken(headerParts[1], config.SigningKey)
 	if err != nil {
 		logrus.Warnf("Attempt to gain access. %v", err)
 		newResponse(c, http.StatusUnauthorized, Response{Message: MsgProblemWithParseToken, Details: err.Error()})
@@ -50,3 +50,22 @@ func (h *Handler) UserIdentity(c *gin.Context) {
 	c.Set(userCtx, userId)
 	c.Set(userPermission, userRole)
 }
+
+// //FOR AXIOS&CORS
+// func CorsMiddleware() gin.HandlerFunc {
+// 	return func(c *gin.Context) {
+// 		// Allow CORS for all origins
+// 		c.Header("Access-Control-Allow-Origin", "*")
+// 		c.Header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+// 		c.Header("Access-Control-Allow-Methods", "POST")
+
+// 		// Handle OPTIONS request
+// 		if c.Request.Method == "OPTIONS" {
+// 			c.AbortWithStatus(http.StatusNoContent)
+// 			return
+// 		}
+
+// 		// Next middleware
+// 		c.Next()
+// 	}
+// }

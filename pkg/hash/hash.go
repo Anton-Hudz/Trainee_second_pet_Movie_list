@@ -16,6 +16,7 @@ import (
 
 //-Other variant with scrypt and salt
 func GeneratePasswordHash(password, salt string) string {
+	// salt := os.Getenv("SALT") other variant getting salt from .env
 	hash, _ := scrypt.Key([]byte(password), []byte(salt), 16384, 8, 1, 32)
 
 	return fmt.Sprintf("%x", hash)

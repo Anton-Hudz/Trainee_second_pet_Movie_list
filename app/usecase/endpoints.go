@@ -8,7 +8,6 @@ import (
 
 	"github.com/Anton-Hudz/MovieList/app/entities"
 	"github.com/Anton-Hudz/MovieList/app/globals"
-	"github.com/Anton-Hudz/MovieList/app/repository"
 	"github.com/Anton-Hudz/MovieList/pkg/hash"
 	"github.com/dgrijalva/jwt-go"
 )
@@ -25,10 +24,10 @@ type tokenClaims struct {
 }
 
 type AuthUser struct {
-	Repo repository.UserRepository
+	Repo UserRepository
 }
 
-func NewAuthUser(repo repository.UserRepository) *AuthUser {
+func NewAuthUser(repo UserRepository) *AuthUser {
 	return &AuthUser{Repo: repo}
 }
 
@@ -113,10 +112,10 @@ func (a *AuthUser) SignOut(userId int, token string) error {
 }
 
 type FilmService struct {
-	Repo repository.FilmRepository
+	Repo FilmRepository
 }
 
-func NewFilmService(repo repository.FilmRepository) *FilmService {
+func NewFilmService(repo FilmRepository) *FilmService {
 	return &FilmService{Repo: repo}
 }
 
