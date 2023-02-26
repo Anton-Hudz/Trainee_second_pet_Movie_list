@@ -32,7 +32,7 @@ func (h *Handler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	id, err := h.usecases.AddUser(inputUserData, config.Salt)
+	id, err := h.AddUser(inputUserData, config.Salt)
 	if err != nil {
 		if errors.Is(err, globals.ErrDuplicateLogin) {
 			logrus.Warnf("Attempt to add user with an existing login: %v.", inputUserData.Login)
@@ -75,7 +75,7 @@ func (h *Handler) LogIn(c *gin.Context) {
 		return
 	}
 
-	token, id, err := h.usecases.GenerateAddToken(input.Login, input.Password, config.SigningKey, config.Salt)
+	token, id, err := h.GenerateAddToken(input.Login, input.Password, config.SigningKey, config.Salt)
 	if err != nil {
 		if errors.Is(err, globals.ErrNotFound) {
 			logrus.Warnf("Attempt to log in user: %v. %v.", input.Login, err)
@@ -120,7 +120,7 @@ func (h *Handler) Logout(c *gin.Context) {
 		return
 	}
 
-	userId, _, err := h.usecases.UserUseCase.ParseToken(headerParts[1], config.SigningKey)
+	userId, _, err := h.UserUseCase.ParseToken(headerParts[1], config.SigningKey)
 	if err != nil {
 		logrus.Warnf("Attempt to log out, %v ", err)
 		newResponse(c, http.StatusUnauthorized, Response{Message: MsgProblemWithParseToken, Details: err.Error()})
@@ -128,7 +128,7 @@ func (h *Handler) Logout(c *gin.Context) {
 		return
 	}
 
-	if err := h.usecases.SignOut(userId, headerParts[1]); err != nil {
+	if err := h.SignOut(userId, headerParts[1]); err != nil {
 		logrus.Warnf("Attempt to log out, %v ", err)
 		newResponse(c, http.StatusNotFound, Response{Message: MsgNotFound, Details: err.Error()})
 
@@ -157,14 +157,14 @@ func (h *Handler) CreateFilm(c *gin.Context) {
 		return
 	}
 
-	if err := h.usecases.ValidateFilmData(inputFilmData); err != nil {
+	if err := h.ValidateFilmData(inputFilmData); err != nil {
 		logrus.Warnf("Attempt to create movie vith wrong parametres: %v. User ID: %v", err, userId)
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
 
 		return
 	}
 
-	directorId, err := h.usecases.GetDirectorId(inputFilmData)
+	directorId, err := h.GetDirectorId(inputFilmData)
 	if err != nil {
 		logrus.Warnf("Attempt to create movie vith wrong parametres: %v. User ID: %v", err, userId)
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
@@ -172,7 +172,7 @@ func (h *Handler) CreateFilm(c *gin.Context) {
 		return
 	}
 
-	id, err := h.usecases.AddFilm(inputFilmData, directorId)
+	id, err := h.AddFilm(inputFilmData, directorId)
 	if err != nil {
 		logrus.Warnf("Attempt to create movie vith wrong parametres: %v. User ID: %v", err, userId)
 		newResponse(c, http.StatusInternalServerError, Response{Message: MsgInternalServerErr, Details: err.Error()})
@@ -204,7 +204,7 @@ func (h *Handler) GetAllFilms(c *gin.Context) {
 
 	userId, _ := c.Get(userCtx)
 
-	SQL, err := h.usecases.MakeQuery(params)
+	SQL, err := h.MakeQuery(params)
 	if err != nil {
 		logrus.Warnf("Attempt to get film list: %v. User ID: %v", err, userId)
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
@@ -212,7 +212,7 @@ func (h *Handler) GetAllFilms(c *gin.Context) {
 		return
 	}
 
-	filmList, err := h.usecases.GetFilmList(SQL)
+	filmList, err := h.GetFilmList(SQL)
 	if err != nil {
 		logrus.Warnf("Attempt to get film list: %v. User ID: %v", err, userId)
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
@@ -255,7 +255,7 @@ func (h *Handler) GetFilmByID(c *gin.Context) {
 		return
 	}
 
-	film, err := h.usecases.GetFilmById(id)
+	film, err := h.GetFilmById(id)
 	if err != nil {
 		logrus.Warnf("Attempt to get film by ID: %v. User ID: %v", err, userId)
 		newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
@@ -276,7 +276,7 @@ func (h *Handler) AddToList(c *gin.Context) {
 
 	switch params.List {
 	case "favouritelist":
-		id, err := h.usecases.AddFilmToList(userId, params.Movie, repository.FavouriteTable)
+		id, err := h.AddFilmToList(userId, params.Movie, repository.FavouriteTable)
 		if err != nil {
 			logrus.Warnf("Attempt to add movie to favourite list: %v. User ID: %v. Film: %v", err, userId, params.Movie)
 			newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})
@@ -289,7 +289,7 @@ func (h *Handler) AddToList(c *gin.Context) {
 			"film's id in my favourite list": id,
 		})
 	case "wishlist":
-		id, err := h.usecases.AddFilmToList(userId, params.Movie, repository.WishlistTable)
+		id, err := h.AddFilmToList(userId, params.Movie, repository.WishlistTable)
 		if err != nil {
 			logrus.Warnf("Attempt to add movie to wish list: %v. User ID: %v. Film: %v", err, userId, params.Movie)
 			newResponse(c, http.StatusBadRequest, Response{Message: MsgBadRequest, Details: err.Error()})

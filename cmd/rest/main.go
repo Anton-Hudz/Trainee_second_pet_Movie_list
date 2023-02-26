@@ -37,9 +37,12 @@ func main() {
 	// 	return
 	// }
 
-	// repos := repository.NewRepository(db)
-	// usecase := usecase.NewUseCase(repos)
-	// handlers := transport.NewHandler(usecase)
+	// repo := repository.NewRepo(db)
+
+	// userUsecase := usecase.NewAuthUser(repo)
+	// filmUsecase := usecase.NewFilmService(repo)
+
+	// handlers := transport.NewHandler(userUsecase, filmUsecase)
 
 	// logrus.Info("Connection to database successfully created")
 
@@ -78,9 +81,12 @@ func main() {
 		return
 	}
 
-	repo := repository.NewRepository(db)
-	usecase := usecase.NewUseCase(repo)
-	handlers := transport.NewHandler(usecase)
+	repo := repository.NewRepo(db)
+
+	userUsecase := usecase.NewAuthUser(repo)
+	filmUsecase := usecase.NewFilmService(repo)
+
+	handlers := transport.NewHandler(userUsecase, filmUsecase)
 	logrus.Info("Connection to database successfully created")
 
 	srv := new(transport.Server)
