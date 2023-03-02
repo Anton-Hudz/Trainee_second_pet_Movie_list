@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/Anton-Hudz/MovieList/cfg"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -51,21 +52,21 @@ func (h *Handler) UserIdentity(c *gin.Context) {
 	c.Set(userPermission, userRole)
 }
 
-// //FOR AXIOS&CORS
-// func CorsMiddleware() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		// Allow CORS for all origins
-// 		c.Header("Access-Control-Allow-Origin", "*")
-// 		c.Header("Access-Control-Allow-Headers", "Content-Type, Authorization")
-// 		c.Header("Access-Control-Allow-Methods", "POST")
+func CORSMiddleware() gin.HandlerFunc {
 
-// 		// Handle OPTIONS request
-// 		if c.Request.Method == "OPTIONS" {
-// 			c.AbortWithStatus(http.StatusNoContent)
-// 			return
-// 		}
+	c := cors.New(cors.Config{
+		AllowOrigins: []string{"http://localhost:3000"},
+		AllowMethods: []string{
+			"POST",
+			"GET",
+			"DELETE",
+		},
+		AllowHeaders: []string{
+			"Content-Type",
+		},
+		ExposeHeaders:    []string{"Content-Type"},
+		AllowCredentials: true,
+	})
 
-// 		// Next middleware
-// 		c.Next()
-// 	}
-// }
+	return c
+}
